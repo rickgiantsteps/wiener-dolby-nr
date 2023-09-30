@@ -61,7 +61,7 @@
     </p>
 
     <div>
-
+      <audioplayer></audioplayer>
     </div>
   </main>
 </template>
@@ -70,6 +70,7 @@
 import "./assets/main.css"
 import "./assets/output.css"
 import "./main.js"
+import Audioplayer from "@/audioplayer.vue";
 
 document.body.classList.toggle("bg-gray-50");
 
