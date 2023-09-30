@@ -132,7 +132,7 @@ export default defineComponent({
           <use xlink:href="#icon-cloud"></use>
         </svg>⠀Upload audio file
       </label>
-      <input id='input-file' type='file' />
+      <input id='input-file' type="file" accept="audio/*"/>
     </div>
     <div class="player">
       <div class="player__top">
