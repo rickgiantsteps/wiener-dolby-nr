@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  mode: 'jit',
   darkMode: 'class',
-  content: ["./src/**/*.{html,vue,js}"],
+  content: [
+    "./main.vue",
+    "./src/**/*.{vue,js}",
+  ],
   theme: {
     extend: {
       animation: {
@@ -28,5 +32,8 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('tailwindcss')('tailwind.config.js'),
+    require('autoprefixer')(),
+  ]
 };

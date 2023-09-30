@@ -1,6 +1,5 @@
 <script setup>
 import "./assets/audioplayer.scss"
-
 </script>
 
 <script>
@@ -9,6 +8,7 @@ export default defineComponent({
   name: 'audioplayer',
   data() {
     return {
+      selected: 0,
       audio: null,
       circleLeft: null,
       barWidth: null,
@@ -17,9 +17,29 @@ export default defineComponent({
       isTimerPlaying: false,
       tracks: [
         {
-          name: "Mii Plaza",
-          artist: "Kazumi Totaka",
-          source: "https://vgmsite.com/soundtracks/wii-music-collection/jkophibxfw/04.%20Mii%20Plaza.mp3",
+          name: "Dancing Queen",
+          artist: "ABBA",
+          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/ABBA%20-%20Dancing%20Queen%20%5BCassette%20Rip%5D.mp3",
+        },
+        {
+          name: "Alberto Balsalm",
+          artist: "Aphex Twin",
+          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Aphex%20Twin%20-%20Alberto%20Balsalm%20%5BCassette%20Rip%5D.mp3",
+        },
+        {
+          name: "Heart-Shaped Box",
+          artist: "Nirvana",
+          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Nirvana%20-%20Heart-Shaped%20Box%20%5BCassette%20Rip%5D.mp3",
+        },
+        {
+          name: "Smooth Operator",
+          artist: "Sade",
+          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Sade%20-%20Smooth%20Operator%20%5BCassette%20Rip%5D.mp3",
+        },
+        {
+          name: "Tom's Diner",
+          artist: "Suzanne Vega",
+          source: "https://github.com/rickgiantsteps/wiener-dolby-nr/raw/master/src/components/demo-songs/Suzanne%20Vega%20-%20Tom's%20Diner%20%5BVinyl%20Rip%5D.mp3",
         }
       ],
       currentTrack: null,
@@ -28,6 +48,13 @@ export default defineComponent({
     };
   },
   methods: {
+    songSelect(){
+      this.currentTrackIndex = this.selected
+      this.currentTrack = this.tracks[this.selected];
+      this.generateTime()
+      this.resetPlayer()
+    },
+
     play() {
       if (this.audio.paused) {
         this.audio.play();
@@ -92,6 +119,9 @@ export default defineComponent({
       this.resetPlayer();
     },
     resetPlayer() {
+      if (this.isTimerPlaying){
+        this.play()
+      }
       this.barWidth = 0;
       this.circleLeft = 0;
       this.audio.currentTime = 0;
@@ -125,6 +155,14 @@ export default defineComponent({
 </script>
 
 <template>
+  <label for="songs" class="justify-center font-bold block mb-2 text-sm text-gray-900 dark:text-white">Select a noisy demo song</label>
+  <select v-model="selected" @change="songSelect()" id="songs" class="justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    <option selected value ="0">ABBA - Dancing Queen</option>
+    <option selected value ="1">Aphex Twin - Alberto Balsalm</option>
+    <option selected value ="2">Nirvana - Heart-Shaped Box</option>
+    <option selected value ="3">Sade - Smooth Operator</option>
+    <option selected value ="4">Suzanne Vega - Tom's Diner</option>
+  </select>
   <div class="wrappero">
     <div class='file file--upload'>
       <label for='input-file'>

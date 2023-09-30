@@ -1,4 +1,3 @@
-<!--suppress ALL -->
 <template>
 
   <header class="flex justify-center">
@@ -68,7 +67,6 @@
 
 <script setup>
 import "./assets/main.css"
-import "./assets/output.css"
 import "./main.js"
 import Audioplayer from "@/audioplayer.vue";
 
