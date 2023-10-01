@@ -4,10 +4,12 @@ import "./assets/audioplayer.scss"
 
 <script>
 import { defineComponent } from 'vue'
+//import { parseFile } from "music-metadata";
 export default defineComponent({
   name: 'audioplayer',
   data() {
     return {
+      uploadedFile : null,
       selected: 0,
       audio: null,
       circleLeft: null,
@@ -48,6 +50,21 @@ export default defineComponent({
     };
   },
   methods: {
+
+    async song_onFileChanged() {
+      this.uploadedFile = this.$refs.newsong.files[0]
+      this.tracks.push({
+        name: "",//"Unknown Song Title",
+        artist: "",//"Unknown Artist",
+        source: URL.createObjectURL(this.uploadedFile)
+      })
+      this.currentTrackIndex = this.tracks.length - 1
+      //const metadata = await parseFile(URL.createObjectURL(this.uploadedFile));
+      this.currentTrack = this.tracks[this.currentTrackIndex];
+      this.generateTime()
+      this.resetPlayer()
+    },
+
     songSelect(){
       this.currentTrackIndex = this.selected
       this.currentTrack = this.tracks[this.selected];
@@ -110,12 +127,6 @@ export default defineComponent({
     },
     prevTrack() {
       this.transitionName = "scale-in";
-      if (this.currentTrackIndex > 0) {
-        this.currentTrackIndex--;
-      } else {
-        this.currentTrackIndex = this.tracks.length - 1;
-      }
-      this.currentTrack = this.tracks[0];
       this.resetPlayer();
     },
     resetPlayer() {
@@ -170,7 +181,7 @@ export default defineComponent({
           <use xlink:href="#icon-cloud"></use>
         </svg>⠀Upload audio file
       </label>
-      <input id='input-file' type="file" accept="audio/*"/>
+      <input v-on:change="song_onFileChanged" ref="newsong" id='input-file' type="file" accept="audio/*"/>
     </div>
     <div class="player">
       <div class="player__top">
