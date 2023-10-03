@@ -61,6 +61,12 @@
 
     <div>
       <audioplayer></audioplayer>
+      <h2 class="flex justify-center text-[#6da4ba] dark:text-gray-50">Noise loop</h2>
+      <p>
+        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(this.noise)">Play noise</button>
+        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="fadeNoise(noise)">Fade noise</button>
+        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="this.stopNoise(noise)">Stop that bloody racket!</button>
+      </p>
     </div>
 
   </main>
@@ -91,6 +97,105 @@ function darkModeSwitch() {
     this.darkOn = false;
   }
 }
+</script>
 
+<script>
+const audioContext = new(window.AudioContext);
 
+let fadeOutTimer;
+export default {
+  name: 'App',
+
+  data() {
+    return {
+      noise: {
+        volume: 0.05, // 0 - 1
+        fadeIn: 2.5, // time in seconds
+        fadeOut: 1.3, // time in seconds
+      }
+    }
+  },
+
+  methods: {
+    createNoise(track) {
+
+      const bufferSize = 2 * audioContext.sampleRate;
+      const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      track.audioSource.buffer = noiseBuffer;
+    },
+
+    stopNoise(track) {
+      if (track.audioSource) {
+        clearTimeout(fadeOutTimer);
+        track.audioSource.stop();
+      }
+    },
+
+    fadeNoise(track) {
+
+      if (track.fadeOut) {
+        track.fadeOut = (track.fadeOut >= 0) ? track.fadeOut : 0.5;
+      } else {
+        track.fadeOut = 0.5;
+      }
+
+      if (track.canFade) {
+
+        track.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + track.fadeOut);
+
+        track.canFade = false;
+
+        fadeOutTimer = setTimeout(() => {
+          this.stopNoise(track);
+        }, track.fadeOut * 1000);
+
+      } else {
+        this.stopNoise(track);
+      }
+
+    },
+
+    buildTrack(track) {
+      track.audioSource = audioContext.createBufferSource();
+      track.gainNode = audioContext.createGain();
+      track.audioSource.connect(track.gainNode);
+      track.gainNode.connect(audioContext.destination);
+      track.canFade = true; // used to prevent fadeOut firing twice
+    },
+
+    setGain(track) {
+
+      track.volume = (track.volume >= 0) ? track.volume : 0.5;
+
+      if (track.fadeIn) {
+        track.fadeIn = (track.fadeIn >= 0) ? track.fadeIn : 0.5;
+      } else {
+        track.fadeIn = 0.5;
+      }
+
+      track.gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+
+      track.gainNode.gain.linearRampToValueAtTime(track.volume / 4, audioContext.currentTime + track.fadeIn / 2);
+
+      track.gainNode.gain.linearRampToValueAtTime(track.volume, audioContext.currentTime + track.fadeIn);
+
+    },
+
+    playNoise(track) {
+
+      this.stopNoise(track);
+      this.buildTrack(track);
+      this.createNoise(track);
+      this.setGain(track);
+      track.audioSource.loop = true;
+      track.audioSource.start();
+    }
+  }
+}
 </script>
