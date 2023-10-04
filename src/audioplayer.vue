@@ -7,10 +7,23 @@ import { defineComponent } from 'vue'
 //import { parseFile } from "music-metadata";
 export default defineComponent({
   name: 'audioplayer',
+
+  props: {
+    selected: String
+  },
+
+  watch: {
+    '$props': {
+      handler: function (val, oldVal) {
+        this.songSelect()
+      },
+      deep: true
+    }
+  },
+
   data() {
     return {
       uploadedFile : null,
-      selected: 0,
       audio: null,
       circleLeft: null,
       barWidth: null,
@@ -166,14 +179,6 @@ export default defineComponent({
 </script>
 
 <template>
-  <label for="songs" class="justify-center font-bold block mb-2 text-sm text-gray-900 dark:text-white">Select a noisy demo song</label>
-  <select v-model="selected" @change="songSelect()" id="songs" class="justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-    <option selected value ="0">ABBA - Dancing Queen</option>
-    <option selected value ="1">Aphex Twin - Alberto Balsalm</option>
-    <option selected value ="2">Nirvana - Heart-Shaped Box</option>
-    <option selected value ="3">Sade - Smooth Operator</option>
-    <option selected value ="4">Suzanne Vega - Tom's Diner</option>
-  </select>
   <div class="wrappero">
     <div class='file file--upload'>
       <label for='input-file'>

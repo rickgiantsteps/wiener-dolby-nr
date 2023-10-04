@@ -60,12 +60,22 @@
     </p>
 
     <div>
-      <audioplayer></audioplayer>
+      <label for="songs" class="justify-center font-bold block mb-2 text-sm text-gray-900 dark:text-white">Select a demo song</label>
+      <select v-model="selected" id="songs" class="justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option selected value ="0">ABBA - Dancing Queen</option>
+        <option value ="1">Aphex Twin - Alberto Balsalm</option>
+        <option value ="2">Nirvana - Heart-Shaped Box</option>
+        <option value ="3">Sade - Smooth Operator</option>
+        <option value ="4">Suzanne Vega - Tom's Diner</option>
+      </select>
+      <div class="grid-cols-3">
+        <audioplayer :selected="selected"></audioplayer>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 100"><path style="fill:#232326" d="m17.5 5.999-.707.707 5.293 5.293H1v1h21.086l-5.294 5.295.707.707L24 12.499l-6.5-6.5z" data-name="Right"/></svg>
+      </div>
       <h2 class="flex justify-center text-[#6da4ba] dark:text-gray-50">Noise loop</h2>
       <p>
-        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(this.noise)">Play noise</button>
-        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="fadeNoise(noise)">Fade noise</button>
-        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="this.stopNoise(noise)">Stop that bloody racket!</button>
+        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Play noise</button>
+        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="stopNoise(noise)">Stop!</button>
       </p>
     </div>
 
@@ -108,6 +118,7 @@ export default {
 
   data() {
     return {
+      selected: "0",
       noise: {
         volume: 0.05, // 0 - 1
         fadeIn: 2.5, // time in seconds
@@ -132,63 +143,30 @@ export default {
 
     stopNoise(track) {
       if (track.audioSource) {
-        clearTimeout(fadeOutTimer);
         track.audioSource.stop();
       }
-    },
-
-    fadeNoise(track) {
-
-      if (track.fadeOut) {
-        track.fadeOut = (track.fadeOut >= 0) ? track.fadeOut : 0.5;
-      } else {
-        track.fadeOut = 0.5;
-      }
-
-      if (track.canFade) {
-
-        track.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + track.fadeOut);
-
-        track.canFade = false;
-
-        fadeOutTimer = setTimeout(() => {
-          this.stopNoise(track);
-        }, track.fadeOut * 1000);
-
-      } else {
-        this.stopNoise(track);
-      }
-
     },
 
     buildTrack(track) {
       track.audioSource = audioContext.createBufferSource();
       track.gainNode = audioContext.createGain();
+      let biquadFilter = audioContext.createBiquadFilter();
+      biquadFilter.type = "highpass";
+      biquadFilter.frequency.setValueAtTime(2000, audioContext.currentTime);
+      biquadFilter.gain.setValueAtTime(0, audioContext.currentTime);
       track.audioSource.connect(track.gainNode);
-      track.gainNode.connect(audioContext.destination);
-      track.canFade = true; // used to prevent fadeOut firing twice
+      track.gainNode.connect(biquadFilter);
+      biquadFilter.connect(audioContext.destination);
     },
 
     setGain(track) {
 
       track.volume = (track.volume >= 0) ? track.volume : 0.5;
 
-      if (track.fadeIn) {
-        track.fadeIn = (track.fadeIn >= 0) ? track.fadeIn : 0.5;
-      } else {
-        track.fadeIn = 0.5;
-      }
-
-      track.gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-
-      track.gainNode.gain.linearRampToValueAtTime(track.volume / 4, audioContext.currentTime + track.fadeIn / 2);
-
-      track.gainNode.gain.linearRampToValueAtTime(track.volume, audioContext.currentTime + track.fadeIn);
-
+      track.gainNode.gain.setValueAtTime(0.003, audioContext.currentTime);
     },
 
     playNoise(track) {
-
       this.stopNoise(track);
       this.buildTrack(track);
       this.createNoise(track);
@@ -198,4 +176,5 @@ export default {
     }
   }
 }
+
 </script>
