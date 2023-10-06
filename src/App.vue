@@ -68,18 +68,74 @@
         <option value ="3">Sade - Smooth Operator</option>
         <option value ="4">Suzanne Vega - Tom's Diner</option>
       </select>
-      <div class="grid-cols-3">
+      <div class="place-items-center flex grid-rows-3 gap-4">
         <audioplayer :selected="selected"></audioplayer>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 100"><path style="fill:#232326" d="m17.5 5.999-.707.707 5.293 5.293H1v1h21.086l-5.294 5.295.707.707L24 12.499l-6.5-6.5z" data-name="Right"/></svg>
+        <button class="h-fit bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
+        <audioplayer download="true"></audioplayer>
       </div>
-      <h2 class="flex justify-center text-[#6da4ba] dark:text-gray-50">Noise loop</h2>
-      <p>
-        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Play noise</button>
-        <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="stopNoise(noise)">Stop!</button>
+      <p class="flex justify-center">
+          <div class="effects-choice-container dark:bg-slate-600 shadow shadow-amber-500 dark:shadow-indigo-500">
+            <label class="text-2xl flex justify-center text-[#6da4ba] dark:text-white">Noise generator</label>
+
+            <section class="synth-type flex-1">
+              <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Play noise</button>
+              <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="stopNoise(noise)">Stop</button>
+              <div class="synth-selections shadow shadow-amber-500 dark:shadow-indigo-400">
+                <button type="button" class="button-81 shadow shadow-amber-500 dark:shadow-indigo-400">OSC 1</button>
+                <div class="synth-slider-container dark:text-white">
+                  <section>
+                    <form>
+                      <button type="button" class="button-81" name="triangle0">Triangle</button>
+                      <button type="button" class="button-80" name="sine0">Sine</button>
+                      <button type="button" class="button-80" name="square0">Square</button>
+                      <button type="button" class="button-80" name="sawtooth0">Saw</button>
+                    </form>
+                  </section>
+                  <section>
+                    <input type="range"
+                           min="0"
+                           max="5"
+                           step="0.5"
+                           class="input2 w-10 mt-14 shadow shadow-amber-500 dark:shadow-indigo-400"
+                           id="am1">
+                    <label class="text-base text-slate-700 dark:text-white">Harm</label>
+                    <p class="text-base text-slate-700 dark:text-white"></p>
+                  </section>
+                </div>
+              </div>
+              <div class="synth-selections shadow shadow-amber-500 dark:shadow-indigo-400">
+                <button type="button" class="button-81 shadow shadow-amber-500 dark:shadow-indigo-400">OSC 1</button>
+                <div class="synth-slider-container dark:text-white">
+                  <section>
+                    <form>
+                      <button type="button" class="button-81" name="triangle0">Triangle</button>
+                      <button type="button" class="button-80" name="sine0">Sine</button>
+                      <button type="button" class="button-80" name="square0">Square</button>
+                      <button type="button" class="button-80" name="sawtooth0">Saw</button>
+                    </form>
+                  </section>
+                  <section>
+                    <input type="range"
+                           min="0"
+                           max="5"
+                           step="0.5"
+                           class="input2 w-10 mt-14 shadow shadow-amber-500 dark:shadow-indigo-400"
+                           id="am1">
+                    <label class="text-base text-slate-700 dark:text-slate-200">Harm</label>
+                    <p class="text-base text-slate-700 dark:text-slate-200"></p>
+                  </section>
+                </div>
+              </div>
+            </section>
+          </div>
       </p>
     </div>
 
   </main>
+
+  <footer class="flex justify-center">
+    <p class="text-base p-6 dark:text-white">SASP Project - AY 2022/2023</p>
+  </footer>
 </template>
 
 <script setup>
@@ -111,8 +167,6 @@ function darkModeSwitch() {
 
 <script>
 const audioContext = new(window.AudioContext);
-
-let fadeOutTimer;
 export default {
   name: 'App',
 
