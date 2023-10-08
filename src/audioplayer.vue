@@ -4,7 +4,7 @@ import "./assets/audioplayer.scss"
 
 <script>
 import { defineComponent } from 'vue'
-//import { parseFile } from "music-metadata";
+import * as mmb from 'music-metadata-browser';
 export default defineComponent({
   name: 'audioplayer',
 
@@ -15,7 +15,7 @@ export default defineComponent({
 
   watch: {
     '$props': {
-      handler: function (val, oldVal) {
+      handler: function () {
         this.songSelect()
       },
       deep: true
@@ -24,6 +24,8 @@ export default defineComponent({
 
   data() {
     return {
+      newname: "Unknown title",
+      newartist: "Unknown artist",
       uploadedFile : null,
       audio: null,
       circleLeft: null,
@@ -65,15 +67,25 @@ export default defineComponent({
   },
   methods: {
 
-    async song_onFileChanged() {
+     async song_onFileChanged() {
       this.uploadedFile = this.$refs.newsong.files[0]
-      this.tracks.push({
-        name: "",//"Unknown Song Title",
-        artist: "",//"Unknown Artist",
-        source: URL.createObjectURL(this.uploadedFile)
+
+       await  mmb.parseBlob(this.uploadedFile).then(metadata => {
+        this.newname = metadata.common.title
+        this.newartist = metadata.common.artist
       })
-      this.currentTrackIndex = this.tracks.length - 1
-      //const metadata = await parseFile(URL.createObjectURL(this.uploadedFile));
+
+      this.tracks.push({
+        name: this.newname,
+        artist: this.newartist,
+        source: URL.createObjectURL(this.uploadedFile)
+      });
+
+
+      this.currentTrackIndex = this.tracks.length - 1;
+      console.log(this.currentTrackIndex)
+
+
       this.currentTrack = this.tracks[this.currentTrackIndex];
       this.generateTime()
       this.resetPlayer()
