@@ -58,6 +58,11 @@ export default defineComponent({
           name: "Tom's Diner",
           artist: "Suzanne Vega",
           source: "https://github.com/rickgiantsteps/wiener-dolby-nr/raw/master/src/components/demo-songs/Suzanne%20Vega%20-%20Tom's%20Diner%20%5BVinyl%20Rip%5D.mp3",
+        },
+        {
+          name: "",
+          artist: "",
+          source: "",
         }
       ],
       currentTrack: null,
@@ -68,6 +73,7 @@ export default defineComponent({
   methods: {
 
      async song_onFileChanged() {
+       this.$emit("update", "5");
       this.uploadedFile = this.$refs.newsong.files[0]
 
        await  mmb.parseBlob(this.uploadedFile).then(metadata => {
@@ -75,6 +81,7 @@ export default defineComponent({
         this.newartist = metadata.common.artist
       })
 
+      this.tracks.pop()
       this.tracks.push({
         name: this.newname,
         artist: this.newartist,
