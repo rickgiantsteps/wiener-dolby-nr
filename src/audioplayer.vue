@@ -81,7 +81,10 @@ export default defineComponent({
         this.newartist = metadata.common.artist
       })
 
-      this.tracks.pop()
+      this.tracks.pop();
+      if (this.newname === undefined && this.newartist === undefined) {
+        this.newname = this.uploadedFile.name;
+       };
       this.tracks.push({
         name: this.newname,
         artist: this.newartist,
@@ -90,12 +93,12 @@ export default defineComponent({
 
 
       this.currentTrackIndex = this.tracks.length - 1;
-      console.log(this.currentTrackIndex)
+      console.log(this.currentTrackIndex);
 
 
       this.currentTrack = this.tracks[this.currentTrackIndex];
-      this.generateTime()
-      this.resetPlayer()
+      this.generateTime();
+      this.resetPlayer();
     },
 
     songSelect(){
