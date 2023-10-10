@@ -42,7 +42,6 @@
           </svg>
         </span>
         </button>
-
       </div>
     </div>
 
@@ -59,7 +58,8 @@
       stationary signal and noise spectra, and additive noise.”
     </p>
 
-    <div>
+    <div class="m-10">
+      <div class="w-64">
       <label for="songs" class="justify-center font-bold block mb-2 text-sm text-gray-900 dark:text-white">Select a demo song</label>
       <select v-model="selected" id="songs" class="justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
         <option value ="0">ABBA - Dancing Queen</option>
@@ -69,6 +69,7 @@
         <option value ="4">Suzanne Vega - Tom's Diner</option>
         <option value ="5" hidden></option>
       </select>
+      </div>
       <div class="place-items-center flex grid-rows-3 gap-4">
         <audioplayer :selected="selected" @update="selectUpdate"></audioplayer>
         <button class="h-fit bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
