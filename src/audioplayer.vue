@@ -5,6 +5,8 @@ import "./assets/audioplayer.scss"
 <script>
 import { defineComponent } from 'vue'
 import * as mmb from 'music-metadata-browser';
+//import FFT from 'fft.js';
+
 export default defineComponent({
   name: 'audioplayer',
 
@@ -71,35 +73,63 @@ export default defineComponent({
     };
   },
   methods: {
+    async divideFrames(file) {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const fileReader = new FileReader();
+
+      // Read the uploaded file as an ArrayBuffer
+      const arrayBuffer = await new Promise((resolve, reject) => {
+        fileReader.onload = () => resolve(fileReader.result);
+        fileReader.onerror = reject;
+        fileReader.readAsArrayBuffer(file);
+      });
+
+      // Decode the audio data from the ArrayBuffer
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      // Calculate the duration of each frame (e.g., 1 second)
+      const frameDuration = 1;
+      const frameSize = Math.ceil(audioContext.sampleRate * frameDuration);
+
+      // Divide the audio buffer into frames
+      const frames = [];
+      for (let i = 0; i < audioBuffer.length; i += frameSize) {
+        const frameData = audioBuffer.getChannelData(0).subarray(i, i + frameSize);
+        frames.push(frameData);
+      }
+
+      return frames;
+    },
 
      async song_onFileChanged() {
+
        this.$emit("update", "5");
-      this.uploadedFile = this.$refs.newsong.files[0]
+       this.uploadedFile = this.$refs.newsong.files[0];
+
+       // Divide the uploaded audio file into frames
+       const frames = await this.divideFrames(this.uploadedFile);
+       console.log(frames);
 
        await  mmb.parseBlob(this.uploadedFile).then(metadata => {
-        this.newname = metadata.common.title
-        this.newartist = metadata.common.artist
-      })
-
-      this.tracks.pop();
-      if (this.newname === undefined && this.newartist === undefined) {
+        this.newname = metadata.common.title;
+        this.newartist = metadata.common.artist;
+       });
+       this.tracks.pop();
+       if (this.newname === undefined && this.newartist === undefined) {
         this.newname = this.uploadedFile.name;
        };
-      this.tracks.push({
+       this.tracks.push({
         name: this.newname,
         artist: this.newartist,
         source: URL.createObjectURL(this.uploadedFile)
       });
+       this.currentTrackIndex = this.tracks.length - 1;
+       console.log(this.currentTrackIndex);
+       this.currentTrack = this.tracks[this.currentTrackIndex];
+       this.generateTime();
+       this.resetPlayer();
+       },
 
-
-      this.currentTrackIndex = this.tracks.length - 1;
-      console.log(this.currentTrackIndex);
-
-
-      this.currentTrack = this.tracks[this.currentTrackIndex];
-      this.generateTime();
-      this.resetPlayer();
-    },
 
     songSelect(){
       this.currentTrackIndex = this.selected
