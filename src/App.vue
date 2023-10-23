@@ -55,17 +55,18 @@
           <div class="absolute bottom-0 left-0 w-1 h-full duration-300 origin-bottom transform scale-y-0 bg-deep-purple-accent-400 group-hover:scale-y-100"></div>
           <div class="absolute top-0 left-0 w-full h-1 duration-300 origin-right transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
           <div class="absolute bottom-0 right-0 w-1 h-full duration-300 origin-top transform scale-y-0 bg-deep-purple-accent-400 group-hover:scale-y-100"></div>
-          <div class="relative p-5 bg-white rounded-sm">
+          <div class="relative p-5 bg-white dark:bg-gray-700 dark:text-white rounded-sm">
             <div class="flex flex-col mb-2 lg:items-center lg:flex-row">
               <div class="flex items-center justify-center w-10 h-10 mb-4 mr-2 rounded-full bg-indigo-50 lg:mb-0">
                   <img class="object-cover" src="./components/icons/dolby.png">
               </div>
               <h6 class="font-semibold leading-5">Dolby-NR</h6>
             </div>
-            <p class="mb-2 text-sm text-gray-900">
+            <p class="mb-2 text-sm text-gray-900 dark:text-white">
               A Dolby noise-reduction system, or Dolby NR, is one of a series of noise reduction systems developed by Dolby Laboratories for use in analog audio tape recording.
             </p>
-            <p aria-label="" class="inline-flex items-center text-sm font-semibold transition-colors duration-200 text-deep-purple-accent-400 hover:text-deep-purple-800"></p>
+            <p class="mb-2 text-sm text-gray-900 dark:text-white">
+            </p>
           </div>
         </div>
         <div class="relative p-px overflow-hidden transition duration-300 transform border rounded shadow-sm hover:scale-105 group hover:shadow-xl">
@@ -73,16 +74,15 @@
           <div class="absolute bottom-0 left-0 w-1 h-full duration-300 origin-bottom transform scale-y-0 bg-deep-purple-accent-400 group-hover:scale-y-100"></div>
           <div class="absolute top-0 left-0 w-full h-1 duration-300 origin-right transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
           <div class="absolute bottom-0 right-0 w-1 h-full duration-300 origin-top transform scale-y-0 bg-deep-purple-accent-400 group-hover:scale-y-100"></div>
-          <div class="relative p-5 bg-white rounded-sm">
+          <div class="relative p-5 bg-white dark:bg-gray-700 dark:text-white rounded-sm">
             <div class="flex flex-col mb-2 lg:items-center lg:flex-row">
               <div class="flex items-center justify-center w-10 h-10 mb-4 mr-2 rounded-full bg-indigo-50 lg:mb-0">
                 <img class="object-cover" src="./components/icons/filter.png">
               </div>
               <h6 class="font-semibold leading-5">Wiener Filter</h6>
             </div>
-            <p class="mb-2 text-sm text-gray-900">
+            <p class="mb-2 text-sm text-gray-900 dark:text-white">
               The Wiener filter is a filter used to produce an estimate of a desired or target random process by linear time-invariant (LTI) filtering of an observed noisy process, assuming known stationary signal and noise spectra, and additive noise.
-
             </p>
           </div>
         </div>
