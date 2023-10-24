@@ -48,7 +48,7 @@
   </header>
 
   <main>
-    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pb-1">
       <div class="grid gap-8 row-gap-5 lg:grid-cols-2">
         <div class="relative p-px overflow-hidden transition duration-300 transform border rounded shadow-sm hover:scale-105 group hover:shadow-xl">
           <div class="absolute bottom-0 left-0 w-full h-1 duration-300 origin-left transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
@@ -99,19 +99,23 @@
     <p class="flex justify-center text-[#6da4ba] dark:text-gray-50">
       stationary signal and noise spectra, and additive noise.”
     </p>
+
 -->
-    <div class="m-10">
+    <div class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pt-5">
       <div class="w-64">
-      <label for="songs" class="justify-center font-bold block mb-2 text-sm text-gray-900 dark:text-white">Select a demo song</label>
-      <select v-model="selected" id="songs" class="justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-        <option value ="0">ABBA - Dancing Queen</option>
-        <option value ="1">Aphex Twin - Alberto Balsalm</option>
-        <option value ="2">Nirvana - Heart-Shaped Box</option>
-        <option value ="3">Sade - Smooth Operator</option>
-        <option value ="4">Suzanne Vega - Tom's Diner</option>
-        <option value ="5" hidden></option>
-      </select>
+        <label for="songs" class="ml-2 font-bold block mb-2 text-sm text-gray-900 dark:text-white">Select a demo song</label>
+        <select v-model="selected" id="songs" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <option value ="0">ABBA - Dancing Queen</option>
+          <option value ="1">Aphex Twin - Alberto Balsalm</option>
+          <option value ="2">Nirvana - Heart-Shaped Box</option>
+          <option value ="3">Sade - Smooth Operator</option>
+          <option value ="4">Suzanne Vega - Tom's Diner</option>
+          <option value ="5" hidden></option>
+        </select>
       </div>
+    </div>
+    <div class="m-10">
+
       <div class="place-items-center flex grid-rows-3 gap-4">
         <audioplayer :selected="selected" @update="selectUpdate"></audioplayer>
         <button class="h-fit bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
