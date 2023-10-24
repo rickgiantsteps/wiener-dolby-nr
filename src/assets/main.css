@@ -12,6 +12,7 @@
 }
 
 .file {
+    margin-top:-150px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -67,17 +68,17 @@
 }
 
 .effects-choice-container {
-    height: fit-content;
+    height: auto;
     border-radius: 5px;
-    float: right;
-    max-width: 1500px;
+    width: auto;
     text-align: center;
     padding: 10px;
     grid-column: 1/4;
 }
 
 .synth-type {
-    height: fit-content;
+    height:fit-content;
+    width:fit-content;
     font-size: 14px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -86,7 +87,7 @@
 .synth-selections {
     border-radius: 5px;
     height: fit-content;
-    width: auto;
+    width: fit-content;
     justify-items: center;
     align-items: center;
     padding: 8px;
@@ -96,7 +97,14 @@
 
 .synth-slider-container {
     display: grid;
-    grid-template-columns: 4.5em 2.5em repeat(5, 3.7em);
+    grid-template-columns: 3.5em 3.5em;
+    font-size: 15px;
+    grid-gap: 25px;
+}
+
+.noise-slider-container {
+    display: grid;
+    grid-template-columns: 1em 3.5em 1em;
     font-size: 15px;
     grid-gap: 25px;
 }

@@ -11,31 +11,16 @@
   fill: currentColor;
 }
 
-.wrappero {
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  height: auto;
-  // background: url(../img/bg.png) no-repeat center;
-  background-size: cover;
-  @media screen and (max-width: 700px), (max-height: 500px) {
-    flex-wrap: wrap;
-    flex-direction: column;
-  }
-}
-
 .player {
+  margin-top: -120px;
   background: #eef3f7;
   width: 410px;
   min-height: 200px;
-  // box-shadow: 0px 55px 75px -10px rgba(76, 70, 124, 0.5);
-  // box-shadow: 0px 55px 105px 10px rgba(76, 70, 124, 0.35);
   box-shadow: 0 15px 35px -5px rgba(50, 88, 130, 0.32);
   border-radius: 15px;
   padding: 30px;
   @media screen and (max-width: 576px), (max-height: 500px) {
     width: 95%;
-    margin-top: 75px;
     min-height: initial;
     padding: 20px 20px 30px;
     max-width: 400px;
@@ -47,74 +32,6 @@
     z-index: 4;
     @media screen and (max-width: 576px), (max-height: 500px) {
       flex-wrap: wrap;
-    }
-  }
-
-  &-cover {
-    width: 300px;
-    height: 300px;
-    margin-left: -70px;
-    flex-shrink: 0;
-    position: relative;
-    border-radius: 15px;
-    // transform: perspective(512px) translate3d(0, 0, 0);
-    // transition: all .4s cubic-bezier(.125, .625, .125, .875);
-    z-index: 1;
-
-    @media screen and (max-width: 576px), (max-height: 500px) {
-      width: 290px;
-      height: 230px;
-      margin: -70px auto 25px;
-    }
-
-    &__item {
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: cover;
-      width: 100%;
-      height: 100%;
-      border-radius: 15px;
-      position: absolute;
-      left: 0;
-      top: 0;
-
-      &:before {
-        content: "";
-        background: inherit;
-        width: 100%;
-        height: 100%;
-        box-shadow: 0 10px 40px 0 rgba(76, 70, 124, 0.5);
-        display: block;
-        z-index: 1;
-        position: absolute;
-        top: 30px;
-        transform: scale(0.9);
-        filter: blur(10px);
-        opacity: 0.9;
-        border-radius: 15px;
-      }
-
-      &:after {
-        content: "";
-        background: inherit;
-        width: 100%;
-        height: 100%;
-        box-shadow: 0 10px 40px 0 rgba(76, 70, 124, 0.5);
-        display: block;
-        z-index: 2;
-        position: absolute;
-        border-radius: 15px;
-      }
-    }
-
-    &__img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 15px;
-      box-shadow: 0 10px 40px 0 rgba(76, 70, 124, 0.5);
-      user-select: none;
-      pointer-events: none;
     }
   }
 
@@ -299,41 +216,6 @@
     @media screen and (max-width: 576px), (max-height: 500px)  {
       font-size: 18px;
       min-height: 50px;
-    }
-  }
-}
-
-.github-btn {
-  position: absolute;
-  right: 40px;
-  bottom: 50px;
-  text-decoration: none;
-  padding: 15px 25px;
-  border-radius: 4px;
-  box-shadow: 0 4px 30px -6px rgba(36, 52, 70, 0.65);
-  background: #24292e;
-  color: #fff;
-  font-weight: bold;
-  letter-spacing: 1px;
-  font-size: 16px;
-  transition: all .3s ease-in-out;
-
-  @media screen and (min-width: 500px) {
-    &:hover {
-      transform: scale(1.1);
-      box-shadow: 0 17px 20px -6px rgba(36, 52, 70, 0.36);
-    }
-  }
-
-  @media screen and (max-width: 700px) {
-    position: relative;
-    bottom: auto;
-    right: auto;
-    margin-top: 20px;
-
-    &:active {
-      transform: scale(1.1);
-      box-shadow: 0 17px 20px -6px rgba(36, 52, 70, 0.36);
     }
   }
 }
