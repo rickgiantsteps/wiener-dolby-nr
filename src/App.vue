@@ -62,14 +62,14 @@
               </div>
               <h6 class="font-extrabold leading-5 text-[#6da4ba] dark:text-white">Dolby-NR</h6>
             </div>
-            <div class="w-50 h-12">
+            <div class="w-50 h-16">
               <p class="mb-2 text-sm text-gray-900 dark:text-white">
                 A Dolby noise-reduction system, or Dolby NR, is one of a series of noise reduction systems developed by Dolby Laboratories for use in analog audio tape recording.
               </p>
             </div>
           </div>
         </div>
-        <div class="flex justify-center border-[#6da4ba] dark:hover:border-white hover:border-blue-100 relative p-px overflow-hidden overflow-y-scroll transition duration-300 transform border rounded shadow-md hover:scale-105 group hover:shadow-lg dark:hover:shadow-white hover:shadow-blue-100 shadow-[#6da4ba]">
+        <div class="flex justify-center border-[#6da4ba] dark:hover:border-white hover:border-blue-100 relative p-px overflow-hidden transition duration-300 transform border rounded shadow-md hover:scale-105 group hover:shadow-lg dark:hover:shadow-white hover:shadow-blue-100 shadow-[#6da4ba]">
           <div class="absolute bottom-0 left-0 w-full h-1 duration-300 origin-left transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
           <div class="absolute bottom-0 left-0 w-1 h-full duration-300 origin-bottom transform scale-y-0 bg-deep-purple-accent-400 group-hover:scale-y-100"></div>
           <div class="absolute top-0 left-0 w-full h-1 duration-300 origin-right transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
@@ -81,9 +81,10 @@
               </div>
               <h6 class="font-extrabold leading-5 text-[#6da4ba] dark:text-white ">Wiener Filter</h6>
             </div>
-            <div class="w-50 h-12">
+            <div class="w-50 h-16">
               <p class="mb-2 text-sm text-gray-900 dark:text-white">
-                The Wiener filter is a filter used to produce an estimate of a desired or target random process by linear time-invariant (LTI) filtering of an observed noisy process, assuming known stationary signal and noise spectra, and additive noise.            </p>
+                The Wiener filter is a filter used to produce an estimate of a desired or target random process by linear time-invariant (LTI) filtering of an observed noisy process, assuming known stationary signal and noise spectra, and additive noise.
+              </p>
             </div>
           </div>
         </div>
