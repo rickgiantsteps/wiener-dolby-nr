@@ -48,7 +48,7 @@
   </header>
 
   <main>
-    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pb-1">
       <div class="grid gap-8 row-gap-5 lg:grid-cols-2">
         <div class="border-[#6da4ba] dark:hover:border-white hover:border-blue-100 relative p-px overflow-hidden transition duration-300 transform border rounded shadow-md hover:scale-105 group hover:shadow-lg dark:hover:shadow-white hover:shadow-blue-100 shadow-[#6da4ba]">
           <div class="absolute bottom-0 left-0 w-full h-1 duration-300 origin-left transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
@@ -90,8 +90,8 @@
       </div>
     </div>
 
-    <div class="grid-rows-3 gap-y-5 justify-center">
-      <div class="h-10 grid grid-rows-2 place-items-center">
+    <div class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pt-5">
+      <div class="h-10 grid grid-rows-2 place-items-center mt-3 mb-11">
         <label for="songs" class="justify-center font-bold block mb-7 text-sm text-[#6da4ba] dark:text-white">Select a demo song</label>
         <select v-model="selected" id="songs" class="shadow-sm dark:shadow-white shadow-[#6da4ba] text-center w-64 justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#6da4ba] focus:border-[#6da4ba] block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-white dark:focus:border-white">
           <option value ="0">ABBA - Dancing Queen</option>
@@ -102,20 +102,23 @@
           <option value ="5" hidden></option>
         </select>
       </div>
-      <div class="place-items-center flex grid-rows-3 gap-x-4">
+
+      <div class="place-items-center grid grid-cols-3 gap-x-0">
         <audioplayer :selected="selected" @update="selectUpdate"></audioplayer>
         <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
         <audioplayer download="true"></audioplayer>
       </div>
-      <div class="flex justify-center">
-        <div class="effects-choice-container dark:bg-slate-600 shadow shadow-[#6da4ba] dark:shadow-white">
-          <label class="text-2xl flex justify-center text-[#6da4ba] dark:text-white">Noise generator</label>
 
+      <div class="flex justify-center mt-10">
+
+        <div class="effects-choice-container dark:bg-slate-600 shadow shadow-[#6da4ba] dark:shadow-white">
+
+          <label class="text-2xl font-bold flex justify-center text-[#6da4ba] dark:text-white">Noise generator</label>
           <section class="synth-type flex-1">
-            <button class="justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-slate-700" @click="playNoise(noise)">Play noise</button>
-            <button class="justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-slate-700" @click="stopNoise(noise)">Stop</button>
+            <button class="justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="playNoise(noise)">Play noise</button>
+            <button class="justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="stopNoise(noise)">Stop</button>
             <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
-              <label class="text-base text-[#6da4ba] dark:text-white ">White Noise</label>
+              <label class="text-base font-semibold text-[#6da4ba] dark:text-white ">White Noise</label>
               <div class="synth-slider-container dark:text-white">
                 <!--<section>
                   <form>
@@ -137,8 +140,9 @@
                 </section>
               </div>
             </div>
+
             <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
-              <label class="text-base text-[#6da4ba] dark:text-white">HP Filter</label>
+              <label class="text-base font-semibold text-[#6da4ba] dark:text-white">HP Filter</label>
               <div class="synth-slider-container dark:text-white">
                 <section>
                   <input type="range"

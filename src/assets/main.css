@@ -34,10 +34,7 @@
     border-width: 1px;
     background-color: hsl(0, 0%, 100%);
     color: hsl(0, 0%, 29%);
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 16px;
-    padding-bottom: 16px;
+    padding: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +69,6 @@
 .effects-choice-container {
     height: fit-content;
     border-radius: 5px;
-    margin: auto;
     float: right;
     max-width: 1500px;
     text-align: center;
@@ -91,7 +87,6 @@
     border-radius: 5px;
     height: fit-content;
     width: auto;
-    margin: 5px;
     justify-items: center;
     align-items: center;
     padding: 8px;
@@ -104,5 +99,4 @@
     grid-template-columns: 4.5em 2.5em repeat(5, 3.7em);
     font-size: 15px;
     grid-gap: 25px;
-    margin-top: 130px;
 }

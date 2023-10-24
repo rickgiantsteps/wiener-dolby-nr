@@ -13,10 +13,9 @@
 
 .wrappero {
   width: 100%;
-  display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: auto;
   // background: url(../img/bg.png) no-repeat center;
   background-size: cover;
   @media screen and (max-width: 700px), (max-height: 500px) {
