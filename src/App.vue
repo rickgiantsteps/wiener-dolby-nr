@@ -30,7 +30,7 @@
         <button type="button" @click="darkModeSwitch()">
         <span class="dark:hidden inline">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-            <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" class="fill-[#6da4ba]/20 stroke-[#6da4ba]"></path>
+            <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" class="fill-amber-400/20 stroke-[#6da4ba]"></path>
             <path d="M12 4v1M17.66 6.344l-.828.828M20.005 12.004h-1M17.66 17.664l-.828-.828M12 20.01V19M6.34 17.664l.835-.836M3.995 12.004h1.01M6 6l.835.836" class="stroke-[#6da4ba]"></path>
           </svg>
         </span>
@@ -48,9 +48,9 @@
   </header>
 
   <main>
-    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20">
+    <div class="px-4 py-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pb-1">
       <div class="grid gap-8 row-gap-5 lg:grid-cols-2">
-        <div class="border-[#6da4ba] dark:hover:border-white hover:border-blue-100 relative p-px overflow-hidden transition duration-300 transform border rounded shadow-md hover:scale-105 group hover:shadow-lg dark:hover:shadow-white hover:shadow-blue-100 shadow-[#6da4ba]">
+        <div class="relative p-px overflow-hidden transition duration-300 transform border rounded shadow-sm hover:scale-105 group hover:shadow-xl">
           <div class="absolute bottom-0 left-0 w-full h-1 duration-300 origin-left transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
           <div class="absolute bottom-0 left-0 w-1 h-full duration-300 origin-bottom transform scale-y-0 bg-deep-purple-accent-400 group-hover:scale-y-100"></div>
           <div class="absolute top-0 left-0 w-full h-1 duration-300 origin-right transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
@@ -60,7 +60,7 @@
               <div class="flex items-center justify-center w-10 h-10 mb-4 mr-2 rounded-full bg-indigo-50 lg:mb-0">
                 <img class="object-cover" src="./components/icons/dolby.png">
               </div>
-              <h6 class="font-extrabold leading-5 text-[#6da4ba] dark:text-white">Dolby-NR</h6>
+              <h6 class="font-semibold leading-5">Dolby-NR</h6>
             </div>
             <div class="w-50 h-12">
               <p class="mb-2 text-sm text-gray-900 dark:text-white">
@@ -69,17 +69,16 @@
             </div>
           </div>
         </div>
-        <div class="flex justify-center border-[#6da4ba] dark:hover:border-white hover:border-blue-100 relative p-px overflow-hidden overflow-y-scroll transition duration-300 transform border rounded shadow-md hover:scale-105 group hover:shadow-lg dark:hover:shadow-white hover:shadow-blue-100 shadow-[#6da4ba]">
+        <div class="relative p-px overflow-hidden transition duration-300 transform border rounded shadow-sm hover:scale-105 group hover:shadow-xl">
           <div class="absolute bottom-0 left-0 w-full h-1 duration-300 origin-left transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
           <div class="absolute bottom-0 left-0 w-1 h-full duration-300 origin-bottom transform scale-y-0 bg-deep-purple-accent-400 group-hover:scale-y-100"></div>
           <div class="absolute top-0 left-0 w-full h-1 duration-300 origin-right transform scale-x-0 bg-deep-purple-accent-400 group-hover:scale-x-100"></div>
           <div class="absolute bottom-0 right-0 w-1 h-full duration-300 origin-top transform scale-y-0 bg-deep-purple-accent-400 group-hover:scale-y-100"></div>
-          <div class="relative p-5 bg-white bg-cover dark:bg-gray-700 dark:text-white rounded-sm">
-            <div class="flex flex-col mb-2 lg:items-center lg:flex-row">
-              <div class="w-10 h-10 mb-4 mr-2 rounded-full bg-indigo-50 lg:mb-0">
+          <div class="relative p-5 bg-white dark:bg-gray-700 dark:text-white rounded-sm">            <div class="flex flex-col mb-2 lg:items-center lg:flex-row">
+              <div class="flex items-center justify-center w-10 h-10 mb-4 mr-2 rounded-full bg-indigo-50 lg:mb-0">
                 <img class="object-cover" src="./components/icons/filter.png">
               </div>
-              <h6 class="font-extrabold leading-5 text-[#6da4ba] dark:text-white ">Wiener Filter</h6>
+              <h6 class="font-semibold leading-5">Wiener Filter</h6>
             </div>
             <div class="w-50 h-12">
             <p class="mb-2 text-sm text-gray-900 dark:text-white">
@@ -90,10 +89,22 @@
       </div>
     </div>
 
-    <div class="grid-rows-3 gap-y-5 justify-center">
-      <div class="h-10 grid grid-rows-2 place-items-center">
-        <label for="songs" class="justify-center font-bold block mb-7 text-sm text-[#6da4ba] dark:text-white">Select a demo song</label>
-        <select v-model="selected" id="songs" class="shadow-sm dark:shadow-white shadow-[#6da4ba] text-center w-64 justify-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#6da4ba] focus:border-[#6da4ba] block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-white dark:focus:border-white">
+<!--
+    <p class="flex justify-center text-[#6da4ba] dark:text-gray-50">
+      “A Dolby noise-reduction system, or Dolby NR, is one of a series of noise reduction systems developed by Dolby Laboratories for use in analog audio tape recording.”
+    </p>
+    <p class="flex justify-center text-[#6da4ba] dark:text-gray-50">
+      “The Wiener filter is a filter used to produce an estimate of a desired or target random process by linear time-invariant (LTI) filtering of an observed noisy process, assuming known
+    </p>
+    <p class="flex justify-center text-[#6da4ba] dark:text-gray-50">
+      stationary signal and noise spectra, and additive noise.”
+    </p>
+
+-->
+    <div class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pt-5">
+      <div class="w-64">
+        <label for="songs" class="ml-2 font-bold block mb-2 text-sm text-gray-900 dark:text-white">Select a demo song</label>
+        <select v-model="selected" id="songs" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
           <option value ="0">ABBA - Dancing Queen</option>
           <option value ="1">Aphex Twin - Alberto Balsalm</option>
           <option value ="2">Nirvana - Heart-Shaped Box</option>
@@ -102,69 +113,70 @@
           <option value ="5" hidden></option>
         </select>
       </div>
-      <div class="place-items-center flex grid-rows-3 gap-x-4">
+    </div>
+    <div class="m-10">
+
+      <div class="place-items-center flex grid-rows-3 gap-4">
         <audioplayer :selected="selected" @update="selectUpdate"></audioplayer>
-        <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
+        <button class="h-fit bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
         <audioplayer download="true"></audioplayer>
       </div>
-      <div class="flex justify-center">
-          <div class="effects-choice-container dark:bg-slate-600 shadow shadow-[#6da4ba] dark:shadow-white">
+      <p class="flex justify-center">
+          <div class="effects-choice-container dark:bg-slate-600 shadow shadow-amber-500 dark:shadow-indigo-500">
             <label class="text-2xl flex justify-center text-[#6da4ba] dark:text-white">Noise generator</label>
 
             <section class="synth-type flex-1">
-              <button class="justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-slate-700" @click="playNoise(noise)">Play noise</button>
-              <button class="justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-slate-700" @click="stopNoise(noise)">Stop</button>
-              <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
-                <label class="text-base text-[#6da4ba] dark:text-white ">White Noise</label>
+              <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Play noise</button>
+              <button class="justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="stopNoise(noise)">Stop</button>
+              <div class="synth-selections shadow shadow-amber-500 dark:shadow-indigo-400">
+                <button type="button" class="button-81 shadow shadow-amber-500 dark:shadow-indigo-400">OSC 1</button>
                 <div class="synth-slider-container dark:text-white">
-                  <!--<section>
+                  <section>
                     <form>
                       <button type="button" class="button-81" name="triangle0">Triangle</button>
                       <button type="button" class="button-80" name="sine0">Sine</button>
                       <button type="button" class="button-80" name="square0">Square</button>
                       <button type="button" class="button-80" name="sawtooth0">Saw</button>
                     </form>
-                  </section>-->
+                  </section>
                   <section>
                     <input type="range"
                            min="0"
                            max="5"
                            step="0.5"
-                           class="input2 w-10 mt-14 shadow shadow-[#6da4ba] dark:shadow-white"
+                           class="input2 w-10 mt-14 shadow shadow-amber-500 dark:shadow-indigo-400"
                            id="am1">
-                    <label class="text-base text-gray-900 dark:text-white">Gain</label>
-                    <p class="text-base text-gray-900 dark:text-white"></p>
+                    <label class="text-base text-slate-700 dark:text-white">Harm</label>
+                    <p class="text-base text-slate-700 dark:text-white"></p>
                   </section>
                 </div>
               </div>
-              <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
-                <label class="text-base text-[#6da4ba] dark:text-white">HP Filter</label>
+              <div class="synth-selections shadow shadow-amber-500 dark:shadow-indigo-400">
+                <button type="button" class="button-81 shadow shadow-amber-500 dark:shadow-indigo-400">OSC 1</button>
                 <div class="synth-slider-container dark:text-white">
                   <section>
-                    <input type="range"
-                           min="0"
-                           max="5"
-                           step="0.5"
-                           class="input2 w-10 mt-14 shadow shadow-[#6da4ba] dark:shadow-white"
-                           id="am1">
-                    <label class="text-base text-gray-900 dark:text-white">Cutoff Frequency</label>
-                    <p class="text-base text-gray-900 dark:text-white"></p>
-                    </section>
+                    <form>
+                      <button type="button" class="button-81" name="triangle0">Triangle</button>
+                      <button type="button" class="button-80" name="sine0">Sine</button>
+                      <button type="button" class="button-80" name="square0">Square</button>
+                      <button type="button" class="button-80" name="sawtooth0">Saw</button>
+                    </form>
+                  </section>
                   <section>
                     <input type="range"
                            min="0"
                            max="5"
                            step="0.5"
-                           class="input2 w-10 mt-14 shadow shadow-[#6da4ba] dark:shadow-white"
+                           class="input2 w-10 mt-14 shadow shadow-amber-500 dark:shadow-indigo-400"
                            id="am1">
-                    <label class="text-base text-gray-900 dark:text-white">Gain</label>
-                    <p class="text-base text-gray-900 dark:text-white"></p>
+                    <label class="text-base text-slate-700 dark:text-slate-200">Harm</label>
+                    <p class="text-base text-slate-700 dark:text-slate-200"></p>
                   </section>
                 </div>
               </div>
             </section>
           </div>
-      </div>
+      </p>
     </div>
 
   </main>
