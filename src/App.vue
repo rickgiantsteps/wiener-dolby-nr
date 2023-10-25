@@ -189,7 +189,6 @@ import "./assets/main.css"
 import "./main.js"
 import Audioplayer from "@/audioplayer.vue";
 import * as Tone from 'tone'
-import * as tf from '@tensorflow/tfjs';
 
 
 document.body.classList.toggle("bg-gray-50");
