@@ -185,6 +185,9 @@
 import "./assets/main.css"
 import "./main.js"
 import Audioplayer from "@/audioplayer.vue";
+import * as Tone from 'tone'
+import * as tf from '@tensorflow/tfjs';
+
 
 document.body.classList.toggle("bg-gray-50");
 
@@ -199,16 +202,17 @@ function darkModeSwitch() {
   document.body.classList.toggle("dark");
   document.body.classList.toggle("dark:bg-[#446573]");
 
-  if(this.darkOn === false){
+  if (this.darkOn === false) {
     this.darkOn = true;
-  }
-  else if(this.darkOn === true) {
+  } else if (this.darkOn === true) {
     this.darkOn = false;
   }
 }
 </script>
 
 <script>
+import * as tf from "@tensorflow/tfjs";
+
 const audioContext = new(window.AudioContext);
 export default {
   name: 'App',
@@ -225,6 +229,24 @@ export default {
   },
 
   methods: {
+
+/*
+    stftr(track, noise) {
+
+      audio to raw conversion
+
+      tf.signal.stft(song, frame_length, frame_step)
+      tf.signal.stft(noise, frame_length, frame_step)
+
+      add the arrays
+
+      tf.spectral.ifft(stfts[i])
+
+      raw to audio conversion
+
+    },
+*/
+
     createNoise(track) {
 
       const bufferSize = 2 * audioContext.sampleRate;
