@@ -231,9 +231,14 @@ export default {
   methods: {
 
 /*
+    async decodeaudio(songlink) {
+      let rsvp = await fetch(songlink);
+      return audioCtx.decodeAudioData(await rsvp.arrayBuffer()); // returns a Promise, buffer is arg for .then((arg) => {})
+    }
+
     stftr(track, noise) {
 
-      audio to raw conversion
+      song = this.decodeaudio(songlink).then((arg) => {})
 
       tf.signal.stft(song, frame_length, frame_step)
       tf.signal.stft(noise, frame_length, frame_step)
