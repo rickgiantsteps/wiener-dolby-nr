@@ -107,8 +107,8 @@
       <div class="place-items-center grid grid-cols-3 gap-x-0">
         <audioplayer :selected="selected" @update="selectUpdate"></audioplayer>
         <form class="button-col">
-          <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
-          <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply Noise</button>
+          <button class="h-20 bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full mt-16" @click="playNoise(noise)">Apply DOLBY NR</button>
+          <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full mt-36 -mb-11" @click="playNoise(noise)">Apply Noise</button>
         </form>
         <audioplayer download="true"></audioplayer>
       </div>
@@ -189,6 +189,8 @@ import "./assets/main.css"
 import "./main.js"
 import Audioplayer from "@/audioplayer.vue";
 import * as Tone from 'tone'
+import * as math from 'mathjs'
+import * as wf from 'window-function'
 
 
 document.body.classList.toggle("bg-gray-50");
@@ -213,7 +215,6 @@ function darkModeSwitch() {
 </script>
 
 <script>
-import * as math from 'mathjs';
 
 const audioContext = new(window.AudioContext);
 export default {
