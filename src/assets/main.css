@@ -76,6 +76,12 @@
     grid-column: 1/4;
 }
 
+.button-col{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
 .synth-type {
     height:fit-content;
     width:fit-content;
