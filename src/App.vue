@@ -118,7 +118,7 @@
           <section class="synth-type">
             <button class="mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="playNoise(noise)">Play noise</button>
             <button class="mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="stopNoise(noise)">Stop</button>
-            <div class="synth-selections mr-3 shadow shadow-[#6da4ba] dark:shadow-white">
+            <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
               <label class="text-base font-semibold text-[#6da4ba] dark:text-white ">White Noise</label>
               <div class="noise-slider-container dark:text-white">
                 <!--<section>
@@ -144,7 +144,7 @@
               </div>
             </div>
 
-            <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
+            <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white ml-1">
               <label class="text-base font-semibold text-[#6da4ba] dark:text-white">HP Filter</label>
               <div class="synth-slider-container dark:text-white">
                 <section>
