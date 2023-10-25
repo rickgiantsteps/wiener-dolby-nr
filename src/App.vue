@@ -106,7 +106,10 @@
 
       <div class="place-items-center grid grid-cols-3 gap-x-0">
         <audioplayer :selected="selected" @update="selectUpdate"></audioplayer>
-        <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
+        <form class="button-col">
+          <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
+          <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply Noise</button>
+        </form>
         <audioplayer download="true"></audioplayer>
       </div>
 
@@ -116,8 +119,8 @@
 
           <label class="text-2xl font-bold flex justify-center text-[#6da4ba] dark:text-white mb-2">Noise generator</label>
           <section class="synth-type">
-            <button class="mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="playNoise(noise)">Play noise</button>
-            <button class="mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="stopNoise(noise)">Stop</button>
+            <button class="ml-3 w-5/6 mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="playNoise(noise)">Play noise</button>
+            <button class="ml-3 w-5/6 mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="stopNoise(noise)">Stop</button>
             <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
               <label class="text-base font-semibold text-[#6da4ba] dark:text-white ">White Noise</label>
               <div class="noise-slider-container dark:text-white">
