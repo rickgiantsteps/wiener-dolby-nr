@@ -214,7 +214,7 @@ function darkModeSwitch() {
 </script>
 
 <script>
-import * as tf from "@tensorflow/tfjs";
+import * as math from 'mathjs';
 
 const audioContext = new(window.AudioContext);
 export default {
@@ -233,27 +233,21 @@ export default {
 
   methods: {
 
-/*
+
     async decodeaudio(songlink) {
       let rsvp = await fetch(songlink);
-      return audioCtx.decodeAudioData(await rsvp.arrayBuffer()); // returns a Promise, buffer is arg for .then((arg) => {})
-    }
+      return audioContext.decodeAudioData(await rsvp.arrayBuffer()); // returns a Promise, buffer is arg for .then((arg) => {})
+    },
 
     stftr(track, noise) {
 
-      song = this.decodeaudio(songlink).then((arg) => {})
-
-      tf.signal.stft(song, frame_length, frame_step)
-      tf.signal.stft(noise, frame_length, frame_step)
-
-      add the arrays
-
-      tf.spectral.ifft(stfts[i])
-
-      raw to audio conversion
+      let songlink = "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Aphex%20Twin%20-%20Alberto%20Balsalm%20%5BCassette%20Rip%5D.mp3"
+      /*songbuffer = this.decodeaudio(songlink)
+      songrawbuffer = songbuffer.getChannelData()
+      outputifft = math.ifft(songfft)*/
 
     },
-*/
+
 
     createNoise(track) {
 
