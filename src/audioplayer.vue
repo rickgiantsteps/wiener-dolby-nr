@@ -6,6 +6,9 @@ import "./assets/audioplayer.scss"
 import { defineComponent } from 'vue'
 import * as mmb from 'music-metadata-browser';
 //import FFT from 'fft.js';
+import applywin from 'window-function/apply'
+import Hann from 'window-function/hann'
+import zp from 'zeropad'
 
 export default defineComponent({
   name: 'audioplayer',
@@ -89,11 +92,15 @@ export default defineComponent({
 
       // Divide the audio buffer into frames
       const frames = [];
-      for (let i = 0; i < audioBuffer.length; i += frameSize) {
-        const frameData = audioBuffer.getChannelData(0).subarray(i, i + frameSize);
+      let length = audioBuffer.length
+      let window_length = 1024
+      const hop = window_length/4
+      let window_number = Math.floor((length-window_length)/hop)+1
+      for (let i = 0; i < window_number; i++) {
+        const frameData = applywin(audioBuffer.getChannelData(0).subarray(i*hop, i*hop + window_length), Hann);
         frames.push(frameData);
       }
-
+      console.log(frames[0])
       return frames;
     },
 
@@ -103,8 +110,8 @@ export default defineComponent({
            this.uploadedFile = this.$refs.newsong.files[0];
 
            // Divide the uploaded audio file into frames
-           const frames = await this.divideFrames(this.uploadedFile);
-           console.log(frames);
+           this.songframes = await this.divideFrames(this.uploadedFile);
+           console.log(this.songframes);
 
            await mmb.parseBlob(this.uploadedFile).then(metadata => {
              this.newname = metadata.common.title;
