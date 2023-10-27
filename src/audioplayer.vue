@@ -12,7 +12,8 @@ export default defineComponent({
 
   props: {
     selected: String,
-    download: false
+    download: false,
+    secondplayer: false
   },
 
   watch: {
@@ -26,6 +27,7 @@ export default defineComponent({
 
   data() {
     return {
+      songframes: null,
       newname: "Unknown title",
       newartist: "Unknown artist",
       uploadedFile : null,
@@ -57,11 +59,6 @@ export default defineComponent({
           source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Sade%20-%20Smooth%20Operator%20%5BCassette%20Rip%5D.mp3",
         },
         {
-          name: "Tom's Diner",
-          artist: "Suzanne Vega",
-          source: "https://github.com/rickgiantsteps/wiener-dolby-nr/raw/master/src/components/demo-songs/Suzanne%20Vega%20-%20Tom's%20Diner%20%5BVinyl%20Rip%5D.mp3",
-        },
-        {
           name: "",
           artist: "",
           source: "",
@@ -74,7 +71,7 @@ export default defineComponent({
   },
   methods: {
     async divideFrames(file) {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new (window.AudioContext)();
       const fileReader = new FileReader();
 
       // Read the uploaded file as an ArrayBuffer
@@ -83,7 +80,6 @@ export default defineComponent({
         fileReader.onerror = reject;
         fileReader.readAsArrayBuffer(file);
       });
-
       // Decode the audio data from the ArrayBuffer
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
@@ -102,40 +98,49 @@ export default defineComponent({
     },
 
      async song_onFileChanged() {
+         if (!this.secondplayer) {
+           this.$emit("update", "5");
+           this.uploadedFile = this.$refs.newsong.files[0];
 
-       this.$emit("update", "5");
-       this.uploadedFile = this.$refs.newsong.files[0];
+           // Divide the uploaded audio file into frames
+           const frames = await this.divideFrames(this.uploadedFile);
+           console.log(frames);
 
-       // Divide the uploaded audio file into frames
-       const frames = await this.divideFrames(this.uploadedFile);
-       console.log(frames);
-
-       await  mmb.parseBlob(this.uploadedFile).then(metadata => {
-        this.newname = metadata.common.title;
-        this.newartist = metadata.common.artist;
-       });
-       this.tracks.pop();
-       if (this.newname === undefined && this.newartist === undefined) {
-        this.newname = this.uploadedFile.name;
-       };
-       this.tracks.push({
-        name: this.newname,
-        artist: this.newartist,
-        source: URL.createObjectURL(this.uploadedFile)
-      });
-       this.currentTrackIndex = this.tracks.length - 1;
-       console.log(this.currentTrackIndex);
-       this.currentTrack = this.tracks[this.currentTrackIndex];
-       this.generateTime();
-       this.resetPlayer();
-       },
+           await mmb.parseBlob(this.uploadedFile).then(metadata => {
+             this.newname = metadata.common.title;
+             this.newartist = metadata.common.artist;
+           });
+           this.tracks.pop();
+           if (this.newname === undefined && this.newartist === undefined) {
+             this.newname = this.uploadedFile.name;
+           }
+           this.tracks.push({
+             name: this.newname,
+             artist: this.newartist,
+             source: URL.createObjectURL(this.uploadedFile)
+           });
+           this.currentTrackIndex = this.tracks.length - 1;
+           console.log(this.currentTrackIndex);
+           this.currentTrack = this.tracks[this.currentTrackIndex];
+           this.generateTime();
+           this.resetPlayer();
+         }
+     },
 
 
-    songSelect(){
-      this.currentTrackIndex = this.selected
-      this.currentTrack = this.tracks[this.selected];
-      this.generateTime()
-      this.resetPlayer()
+    async songSelect(){
+      if (!this.secondplayer) {
+        this.currentTrackIndex = this.selected
+        this.currentTrack = this.tracks[this.selected];
+        this.generateTime()
+        this.resetPlayer()
+
+        const response = await fetch(this.currentTrack.source);
+        const blob = await response.blob();
+        const file = new File([blob], 'song.mp3', {type: 'audio/mpeg'});
+        this.songframes = await this.divideFrames(file)
+        console.log(this.songframes)
+      }
     },
 
     play() {
@@ -147,6 +152,7 @@ export default defineComponent({
         this.isTimerPlaying = false;
       }
     },
+
     generateTime() {
       let width = (100 / this.audio.duration) * this.audio.currentTime;
       this.barWidth = width + "%";
@@ -170,6 +176,7 @@ export default defineComponent({
       this.duration = durmin + ":" + dursec;
       this.currentTime = curmin + ":" + cursec;
     },
+
     updateBar(x) {
       let progress = this.$refs.progress;
       let maxduration = this.audio.duration;
@@ -212,21 +219,30 @@ export default defineComponent({
       }, 300);
     },
   },
-  created() {
-    let vm = this;
-    this.currentTrack = this.tracks[0];
-    this.audio = new Audio();
-    this.audio.src = this.currentTrack.source;
-    this.audio.ontimeupdate = function() {
-      vm.generateTime();
-    };
-    this.audio.onloadedmetadata = function() {
-      vm.generateTime();
-    };
-    this.audio.onended = function() {
-      vm.audio.currentTime = 0
-      vm.isTimerPlaying = false;
-    };
+
+  async created() {
+    if (!this.secondplayer) {
+      let vm = this;
+      this.currentTrack = this.tracks[0];
+      this.audio = new Audio();
+      this.audio.src = this.currentTrack.source;
+      this.audio.ontimeupdate = function() {
+        vm.generateTime();
+      };
+      this.audio.onloadedmetadata = function() {
+        vm.generateTime();
+      };
+      this.audio.onended = function() {
+        vm.audio.currentTime = 0
+        vm.isTimerPlaying = false;
+      };
+
+      const response = await fetch(this.audio.src);
+      const blob = await response.blob();
+      const file = new File([blob], 'song.mp3', {type: 'audio/mpeg'});
+      this.songframes = await this.divideFrames(file)
+      console.log(this.songframes)
+    }
   }
 })
 </script>

@@ -99,8 +99,7 @@
           <option value ="1">Aphex Twin - Alberto Balsalm</option>
           <option value ="2">Nirvana - Heart-Shaped Box</option>
           <option value ="3">Sade - Smooth Operator</option>
-          <option value ="4">Suzanne Vega - Tom's Diner</option>
-          <option value ="5" hidden></option>
+          <option value ="4" hidden></option>
         </select>
       </div>
 
@@ -110,7 +109,7 @@
           <button class="h-20 bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full mt-16" @click="playNoise(noise)">Apply DOLBY NR</button>
           <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full mt-36 -mb-11" @click="playNoise(noise)">Apply Noise</button>
         </form>
-        <audioplayer download="true"></audioplayer>
+        <audioplayer download="true" secondplayer="true"></audioplayer>
       </div>
 
       <div class="flex justify-center mt-10">
@@ -239,14 +238,14 @@ export default {
       return audioContext.decodeAudioData(await rsvp.arrayBuffer()); // returns a Promise, buffer is arg for .then((arg) => {})
     },
 
-    stftr(track, noise) {
+    /*stftr(track, noise) {
 
       let songlink = "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Aphex%20Twin%20-%20Alberto%20Balsalm%20%5BCassette%20Rip%5D.mp3"
       /*songbuffer = this.decodeaudio(songlink)
       songrawbuffer = songbuffer.getChannelData()
-      outputifft = math.ifft(songfft)*/
+      outputifft = math.ifft(songfft)
 
-    },
+    },*/
 
 
     createNoise(track) {
