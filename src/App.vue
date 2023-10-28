@@ -187,8 +187,6 @@
 import "./assets/main.css"
 import "./main.js"
 import Audioplayer from "@/audioplayer.vue";
-//import FFT from 'fft.js';
-//import zp from 'zeropad'
 
 
 document.body.classList.toggle("bg-gray-50");
@@ -213,7 +211,7 @@ function darkModeSwitch() {
 </script>
 
 <script>
-
+import * as fourier from 'fft-js'
 const audioContext = new(window.AudioContext);
 export default {
   name: 'App',
@@ -232,17 +230,30 @@ export default {
 
   methods: {
 
-    /*freq_processing(track, noise) {
+    freq_processing(track, noise) {
 
-      track fft
-      noise fft
+      let windowsize = 1024
+      let zeropad_factor = windowsize * 4
+      let fourierframes
+      let timeframes
 
-      filtering
+      for (let i=0; i<track.length; i++) {
+        console.log(track[i])
+        //zeropad works but concat here throws error for some reason
+        fourierframes[i] = fourier.fft(track[i].concat(Array(zeropad_factor-track[i].length).fill(0)))
+      }
 
-      ifft
-      file write
+      //noise fft
 
-    },*/
+      //filtering
+
+      for (let i=0; i<track.length; i++) {
+        timeframes[i] = fourier.ifft(fourierframes[i])
+      }
+
+      //file write
+
+    },
 
 
     createNoise(track) {
@@ -299,6 +310,7 @@ export default {
     songframed (newFrames) {
       this.songframes = newFrames
       console.log(this.songframes)
+      this.freq_processing(this.songframes, 0)
     }
   }
 }
