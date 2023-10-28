@@ -5,10 +5,8 @@ import "./assets/audioplayer.scss"
 <script>
 import { defineComponent } from 'vue'
 import * as mmb from 'music-metadata-browser';
-//import FFT from 'fft.js';
 import applywin from 'window-function/apply'
 import Hann from 'window-function/hann'
-import zp from 'zeropad'
 
 export default defineComponent({
   name: 'audioplayer',
@@ -16,16 +14,22 @@ export default defineComponent({
   props: {
     selected: String,
     download: false,
-    secondplayer: false
+    secondplayer: false,
   },
 
   watch: {
-    '$props': {
+    selected: {
       handler: function () {
         this.songSelect()
       },
       deep: true
-    }
+    },
+    songframes: {
+      handler: function (newVal) {
+        this.$emit('frame', newVal);
+      },
+      deep: true
+    },
   },
 
   data() {
@@ -72,6 +76,7 @@ export default defineComponent({
       transitionName: null
     };
   },
+
   methods: {
     async divideFrames(file) {
       const audioContext = new (window.AudioContext)();
@@ -87,8 +92,8 @@ export default defineComponent({
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
       // Calculate the duration of each frame (e.g., 1 second)
-      const frameDuration = 1;
-      const frameSize = Math.ceil(audioContext.sampleRate * frameDuration);
+      //const frameDuration = 1;
+      //const frameSize = Math.ceil(audioContext.sampleRate * frameDuration);
 
       // Divide the audio buffer into frames
       const frames = [];
@@ -100,7 +105,7 @@ export default defineComponent({
         const frameData = applywin(audioBuffer.getChannelData(0).subarray(i*hop, i*hop + window_length), Hann);
         frames.push(frameData);
       }
-      console.log(frames[0])
+      console.log(typeof this.songframes)
       return frames;
     },
 
