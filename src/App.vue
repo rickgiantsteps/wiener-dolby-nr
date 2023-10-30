@@ -126,9 +126,11 @@
               <div class="noise-slider-container dark:text-white">
                 <section>
                   <input type="range"
+                         v-model = "noise.volume"
+                         @change = "setGain(noise)"
                          min="0"
-                         max="5"
-                         step="0.5"
+                         max="0.1"
+                         step="0.001"
                          class="input w-10 shadow shadow-[#6da4ba] dark:shadow-white"
                          id="am1">
                 </section>
@@ -141,17 +143,21 @@
               <div class="synth-slider-container dark:text-white">
                 <section>
                   <input type="range"
-                         min="0"
-                         max="5"
-                         step="0.5"
+                         v-model = "filter.frequency"
+                         @change = "setFilter(biquadFilter)"
+                         min="1000"
+                         max="8000"
+                         step="10"
                          class="input2 w-10 shadow shadow-[#6da4ba] dark:shadow-white"
                          id="am2">
                 </section>
                 <section>
                   <input type="range"
-                         min="0"
-                         max="5"
-                         step="0.5"
+                         v-model = "filter.gain"
+                         @change = "setFilter(biquadFilter)"
+                         min="-40"
+                         max="40"
+                         step="0.01"
                          class="input2 w-10 shadow shadow-[#6da4ba] dark:shadow-white"
                          id="am3">
 
@@ -230,12 +236,17 @@ export default {
 
   data() {
     return {
+      biquadFilter: null,
       songframes: null,
       selected: "0",
       noise: {
         volume: 0.05, // 0 - 1
-        fadeIn: 2.5, // time in seconds
-        fadeOut: 1.3, // time in seconds
+        //fadeIn: 2.5, // time in seconds
+        //fadeOut: 1.3, // time in seconds
+      },
+      filter: {
+        frequency: 2000,
+        gain: 0
       }
     }
   },
@@ -290,20 +301,24 @@ export default {
     buildTrack(track) {
       track.audioSource = audioContext.createBufferSource();
       track.gainNode = audioContext.createGain();
-      let biquadFilter = audioContext.createBiquadFilter();
-      biquadFilter.type = "highpass";
-      biquadFilter.frequency.setValueAtTime(2000, audioContext.currentTime);
-      biquadFilter.gain.setValueAtTime(0, audioContext.currentTime);
+      this.biquadFilter = audioContext.createBiquadFilter();
+      this.biquadFilter.type = "highpass";
+      this.setFilter(this.biquadFilter)
       track.audioSource.connect(track.gainNode);
-      track.gainNode.connect(biquadFilter);
-      biquadFilter.connect(audioContext.destination);
+      track.gainNode.connect(this.biquadFilter);
+      this.biquadFilter.connect(audioContext.destination);
+    },
+
+    setFilter(biquadFilter) {
+      biquadFilter.frequency.setValueAtTime(this.filter.frequency, audioContext.currentTime);
+      biquadFilter.gain.setValueAtTime(this.filter.gain, audioContext.currentTime);
     },
 
     setGain(track) {
 
-      track.volume = (track.volume >= 0) ? track.volume : 0.5;
+      track.volume = (track.volume >= 0) ? track.volume : this.noise.volume;
 
-      track.gainNode.gain.setValueAtTime(0.003, audioContext.currentTime);
+      track.gainNode.gain.setValueAtTime(this.noise.volume, audioContext.currentTime);
     },
 
     playNoise(track) {
