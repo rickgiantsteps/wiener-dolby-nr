@@ -93,7 +93,7 @@
 .synth-selections {
     border-radius: 5px;
     height: fit-content;
-    width: fit-content;
+    width: 11em;
     justify-items: center;
     align-items: center;
     padding: 8px;
@@ -103,14 +103,64 @@
 
 .synth-slider-container {
     display: grid;
-    grid-template-columns: 3.5em 3.5em;
+    grid-template-rows: 3.5em 3.5em;
     font-size: 15px;
     grid-gap: 25px;
+    transform: rotate(270deg);
+    margin-top: 130px;
+    width: 140px;
 }
 
 .noise-slider-container {
     display: grid;
-    grid-template-columns: 1em 3.5em 1em;
+    grid-template-columns: 10em;
     font-size: 15px;
-    grid-gap: 25px;
+    color: #DA22FF;
+    transform: rotate(270deg);
+    margin-top: 130px;
+}
+
+.input[type="range"] {
+    -webkit-appearance: none;
+    height: 5px;
+    width: 120px;
+    border-radius: 5px;
+    background: #4d4879;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    position: relative;
+    margin-bottom: 1.5em;
+}
+
+.input2[type="range"] {
+    -webkit-appearance: none;
+    height: 5px;
+    width: 125px;
+    border-radius: 5px;
+    background: #4d4879;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    position: relative;
+    margin-top: 1.5em;
+}
+
+.two-col {
+    width: 10em;
+}
+
+.two-col .col1,
+.two-col .col2 {
+    width: 49%;
+}
+
+.two-col .col1 {
+    float: left;
+}
+
+.two-col .col2 {
+    float: right;
 }

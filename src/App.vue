@@ -106,8 +106,9 @@
       <div class="place-items-center grid grid-cols-3 gap-x-0">
         <audioplayer :selected="selected" @update="selectUpdate" @frame="songframed"></audioplayer>
         <form class="button-col">
-          <button class="h-20 bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full mt-16" @click="playNoise(noise)">Apply DOLBY NR</button>
-          <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full mt-36 -mb-11" @click="playNoise(noise)">Apply Noise</button>
+          <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
+          <!--<button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button> -->
+          <button id="buttonNoise" class="h-fit mt-2 shadow-2xl shadow-[#6da4ba] font-bold py-2 px-4 rounded-full" @click="changeProperties()">Apply Noise</button>
         </form>
         <audioplayer download="true" secondplayer="true"></audioplayer>
       </div>
@@ -116,34 +117,23 @@
 
         <div class="effects-choice-container dark:bg-slate-600 shadow shadow-[#6da4ba] dark:shadow-white">
 
-          <label class="text-2xl font-bold flex justify-center text-[#6da4ba] dark:text-white mb-2">Noise generator</label>
+          <label class="text-2xl font-bold flex justify-center text-[#6da4ba] dark:text-white mb-2">NOISE GENERATOR</label>
           <section class="synth-type">
             <button class="ml-3 w-5/6 mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="playNoise(noise)">Play noise</button>
             <button class="ml-3 w-5/6 mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="stopNoise(noise)">Stop</button>
             <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
               <label class="text-base font-semibold text-[#6da4ba] dark:text-white ">White Noise</label>
               <div class="noise-slider-container dark:text-white">
-                <!--<section>
-                  <form>
-                    <button type="button" class="button-81" name="triangle0">Triangle</button>
-                    <button type="button" class="button-80" name="sine0">Sine</button>
-                    <button type="button" class="button-80" name="square0">Square</button>
-                    <button type="button" class="button-80" name="sawtooth0">Saw</button>
-                  </form>
-                </section>-->
-                <section>
-                </section>
                 <section>
                   <input type="range"
                          min="0"
                          max="5"
                          step="0.5"
-                         class="input2 w-10 mt-14 shadow shadow-[#6da4ba] dark:shadow-white"
+                         class="input w-10 shadow shadow-[#6da4ba] dark:shadow-white"
                          id="am1">
-                  <label class="text-base text-gray-900 dark:text-white">Gain</label>
-                  <p class="text-base text-gray-900 dark:text-white"></p>
                 </section>
               </div>
+              <label class="mt-28 text-base text-gray-900 dark:text-white mr-3">Gain</label>
             </div>
 
             <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white ml-1">
@@ -154,27 +144,34 @@
                          min="0"
                          max="5"
                          step="0.5"
-                         class="input2 w-10 mt-14 shadow shadow-[#6da4ba] dark:shadow-white"
-                         id="am1">
-                  <label class="text-base text-gray-900 dark:text-white">Cutoff Frequency</label>
-                  <p class="text-base text-gray-900 dark:text-white"></p>
+                         class="input2 w-10 shadow shadow-[#6da4ba] dark:shadow-white"
+                         id="am2">
                 </section>
                 <section>
                   <input type="range"
                          min="0"
                          max="5"
                          step="0.5"
-                         class="input2 w-10 mt-14 shadow shadow-[#6da4ba] dark:shadow-white"
-                         id="am1">
-                  <label class="text-base text-gray-900 dark:text-white">Gain</label>
-                  <p class="text-base text-gray-900 dark:text-white"></p>
+                         class="input2 w-10 shadow shadow-[#6da4ba] dark:shadow-white"
+                         id="am3">
+
                 </section>
+              </div>
+              <div class="mt-28 two-col">
+                <div class="col1">
+                  <label class=" text-base text-gray-900 dark:text-white">Freq</label>
+                </div>
+
+                <div class="col2">
+                  <label class="text-base text-gray-900 dark:text-white">Gain</label>
+                </div>
               </div>
             </div>
           </section>
         </div>
       </div>
     </div>
+
 
   </main>
 
@@ -195,6 +192,21 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
   document.documentElement.classList.toggle("dark")
   document.body.classList.toggle("dark");
   document.body.classList.toggle("dark:bg-[#446573]");
+}
+
+function changeProperties() {
+  var button = document.getElementById("buttonNoise");
+  if (this.appliedNoise == false) {
+    button.style.backgroundColor = "#446111"; // Change the background color
+    button.style.color = "#FFF"; // Change the text color
+    button.innerHTML = "Apply Noise"; // Change the button text
+    this.appliedNoise=true;
+  }else{
+    button.style.backgroundColor = "#F00"; // Change the background color
+    button.style.color = "#FFF"; // Change the text color
+    button.innerHTML = "Clicked"; // Change the button text
+    this.appliedNoise=false;
+  }
 }
 
 function darkModeSwitch() {
