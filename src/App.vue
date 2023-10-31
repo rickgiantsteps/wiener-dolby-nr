@@ -231,6 +231,9 @@ function darkModeSwitch() {
 <script>
 import * as fourier from 'fft-js'
 const audioContext = new(window.AudioContext);
+let windowsize = 1024
+let zeropad_factor = windowsize * 4
+let noiseanalyser = audioContext.createAnalyser();
 export default {
   name: 'App',
 
@@ -244,6 +247,7 @@ export default {
         //fadeIn: 2.5, // time in seconds
         //fadeOut: 1.3, // time in seconds
       },
+      noisedata: Float32Array,
       filter: {
         frequency: 2000,
         gain: 0
@@ -255,8 +259,6 @@ export default {
 
     freq_processing(track, noise) {
 
-      let windowsize = 1024
-      let zeropad_factor = windowsize * 4
       let fourierframes
       let timeframes
 
@@ -293,9 +295,9 @@ export default {
     },
 
     stopNoise(track) {
-      if (track.audioSource) {
-        track.audioSource.stop();
-      }
+        if (track.audioSource) {
+          track.audioSource.stop();
+        }
     },
 
     buildTrack(track) {
@@ -304,9 +306,11 @@ export default {
       this.biquadFilter = audioContext.createBiquadFilter();
       this.biquadFilter.type = "highpass";
       this.setFilter(this.biquadFilter)
+      noiseanalyser.fftSize = zeropad_factor*2;
       track.audioSource.connect(track.gainNode);
       track.gainNode.connect(this.biquadFilter);
-      this.biquadFilter.connect(audioContext.destination);
+      this.biquadFilter.connect(noiseanalyser);
+      noiseanalyser.connect(audioContext.destination)
     },
 
     setFilter(biquadFilter) {
@@ -321,13 +325,25 @@ export default {
       track.gainNode.gain.setValueAtTime(this.noise.volume, audioContext.currentTime);
     },
 
-    playNoise(track) {
+    getnoisedata() {
+      const bufferLength = noiseanalyser.frequencyBinCount;
+      console.log(noiseanalyser.frequencyBinCount)
+      console.log(noiseanalyser.fftSize)
+      const dataArray = new Float32Array(bufferLength);
+      noiseanalyser.getFloatTimeDomainData(dataArray)
+      return dataArray;
+    },
+
+    async playNoise(track) {
       this.stopNoise(track);
       this.buildTrack(track);
       this.createNoise(track);
       this.setGain(track);
       track.audioSource.loop = true;
       track.audioSource.start();
+      await new Promise(r => setTimeout(r, 300));
+      this.noisedata = this.getnoisedata()
+      console.log(this.noisedata)
     },
 
     selectUpdate (newData) {
