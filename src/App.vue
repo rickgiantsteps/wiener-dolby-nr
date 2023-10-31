@@ -255,6 +255,12 @@ export default {
     }
   },
 
+  beforeMount() {
+    this.buildTrack(this.noise);
+    this.createNoise(this.noise);
+    this.setGain(this.noise);
+  },
+
   methods: {
 
     freq_processing(track, noise) {
@@ -295,9 +301,11 @@ export default {
     },
 
     stopNoise(track) {
+      try {
         if (track.audioSource) {
           track.audioSource.stop();
         }
+      } catch(e) {}
     },
 
     buildTrack(track) {
