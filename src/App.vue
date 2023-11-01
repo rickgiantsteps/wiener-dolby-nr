@@ -253,6 +253,8 @@ export default {
         frequency: 2000,
         gain: 0
       },
+      noisepower: null,
+      songpower: null,
       out: Float32Array
     }
   },
@@ -275,7 +277,6 @@ export default {
       await new Promise(r => setTimeout(r, 1000));
       this.noisefourier = await fourier.fft(this.noisedata)
       this.stopNoise(this.noise)
-      console.log(this.noisefourier)
 
       for (let i=0; i<10; i++) {
         let track_array = []
@@ -285,6 +286,10 @@ export default {
         }
         this.fourierframes[i] = await fourier.fft(track_array.concat(Array(zeropad_factor-track[i].length).fill(0)))
       }
+
+      this.noisepower = this.getpower(this.noisefourier,1)
+      this.songpower = this.getpower(this.fourierframes,10)
+      console.log(this.songpower)
 
       //filtering
 
@@ -307,6 +312,45 @@ export default {
 
     },
 
+    getpower(freqframes, n) {
+
+      let power = [];
+      let framepower = [];
+      let ipower = []
+      let undividedpow = new Array(4096).fill(0)
+      let sum = [];
+      let numbersongframes = 10
+
+      if (n===1) {
+        for (let i=0; i<freqframes.length; i++) {
+          power[i] = Math.pow(freqframes[i][0],2)+Math.pow(freqframes[i][1],2)
+        }
+      } else {
+
+        for (let i=0; i<numbersongframes; i++) {
+          framepower = []
+          for(let ii = 0; ii < freqframes[i].length; ii++){
+            framepower[ii] = Math.pow(freqframes[i][ii][0],2)+Math.pow(freqframes[i][ii][1],2)
+          }
+          ipower[i] = framepower
+        }
+
+        for (let i=0; i<ipower.length-1; i++) {
+          sum = ipower[i].map(function (num, idx) {
+            return num + ipower[i + 1][idx];
+          });
+          undividedpow = undividedpow.map(function (num, idx) {
+            return num + sum[idx];
+          });
+        }
+
+        for (let i = 0; i < undividedpow.length; i++) {
+          power[i] = undividedpow[i] / numbersongframes;
+        }
+      }
+
+      return power
+    },
 
     createNoise(track) {
 
