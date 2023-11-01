@@ -269,6 +269,9 @@ export default {
 
     async freq_processing(track, noise) {
 
+      let emphfilt = []
+      let deemphfilt = []
+
       //takes too long, we need a loading interface
 
       //sometimes returns 0, needs time to fill noise data not consistent, noise should always be running
@@ -289,7 +292,14 @@ export default {
 
       this.noisepower = this.getpower(this.noisefourier,1)
       this.songpower = this.getpower(this.fourierframes,10)
-      console.log(this.songpower)
+
+      //filters
+      for (let i = 0; i < this.songpower.length; i++) {
+        emphfilt[i] = Math.sqrt(this.noisepower[i] / this.songpower[i]);
+        deemphfilt[i] = Math.sqrt((2*this.songpower[i]) / this.noisepower[i]);
+      }
+      console.log(emphfilt)
+      console.log(deemphfilt)
 
       //filtering
 
@@ -319,7 +329,6 @@ export default {
       let ipower = []
       let undividedpow = new Array(4096).fill(0)
       let sum = [];
-      let numbersongframes = 10
 
       if (n===1) {
         for (let i=0; i<freqframes.length; i++) {
@@ -327,7 +336,7 @@ export default {
         }
       } else {
 
-        for (let i=0; i<numbersongframes; i++) {
+        for (let i=0; i<n; i++) {
           framepower = []
           for(let ii = 0; ii < freqframes[i].length; ii++){
             framepower[ii] = Math.pow(freqframes[i][ii][0],2)+Math.pow(freqframes[i][ii][1],2)
@@ -345,7 +354,7 @@ export default {
         }
 
         for (let i = 0; i < undividedpow.length; i++) {
-          power[i] = undividedpow[i] / numbersongframes;
+          power[i] = undividedpow[i] / n;
         }
       }
 
