@@ -244,8 +244,6 @@ export default {
       selected: "0",
       noise: {
         volume: 0.05, // 0 - 1
-        //fadeIn: 2.5, // time in seconds
-        //fadeOut: 1.3, // time in seconds
       },
       noisedata: Float32Array,
       fourierframes: Float32Array,
@@ -271,9 +269,6 @@ export default {
 
       //takes too long, we need a loading interface
 
-      console.log("track!")
-      console.log(track)
-
       //sometimes returns 0, needs time to fill noise data not consistent, noise should always be running
       //perhaps run but disconnected when not playing?
       await this.playNoise(this.noise)
@@ -291,9 +286,6 @@ export default {
         this.fourierframes[i] = await fourier.fft(track_array.concat(Array(zeropad_factor-track[i].length).fill(0)))
       }
 
-      console.log(this.noisefourier)
-      console.log(this.fourierframes)
-
       //filtering
 
       for (let i=0; i<10; i++) {
@@ -309,9 +301,7 @@ export default {
       //     here add to out buffer, keeping track of the zero padding
       //     out_sd[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(his.timeframes[i])
       this.out = [0]
-
-      console.log("track!")
-      console.log(this.timeframes)
+      console.log(this.out)
 
       //file write
 
@@ -393,7 +383,6 @@ export default {
 
     songframed (newFrames) {
       this.songframes = newFrames
-      console.log(this.songframes)
       this.freq_processing(this.songframes, 0)
     }
   }

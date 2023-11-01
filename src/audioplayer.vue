@@ -106,7 +106,6 @@ export default defineComponent({
         const frameData = applywin(audioBuffer.getChannelData(0).subarray(i*hop, i*hop + window_length), Hann);
         frames.push(frameData);
       }
-      console.log(typeof this.songframes)
       return frames;
     },
 
@@ -117,7 +116,6 @@ export default defineComponent({
 
            // Divide the uploaded audio file into frames
            this.songframes = await this.divideFrames(this.uploadedFile);
-           console.log(this.songframes);
 
            await mmb.parseBlob(this.uploadedFile).then(metadata => {
              this.newname = metadata.common.title;
@@ -133,7 +131,6 @@ export default defineComponent({
              source: URL.createObjectURL(this.uploadedFile)
            });
            this.currentTrackIndex = this.tracks.length - 1;
-           console.log(this.currentTrackIndex);
            this.currentTrack = this.tracks[this.currentTrackIndex];
            this.generateTime();
            this.resetPlayer();
@@ -152,7 +149,6 @@ export default defineComponent({
         const blob = await response.blob();
         const file = new File([blob], 'song.mp3', {type: 'audio/mpeg'});
         this.songframes = await this.divideFrames(file)
-        console.log(this.songframes)
       }
     },
 
@@ -254,7 +250,6 @@ export default defineComponent({
       const blob = await response.blob();
       const file = new File([blob], 'song.mp3', {type: 'audio/mpeg'});
       this.songframes = await this.divideFrames(file)
-      console.log(this.songframes)
     }
   }
 })
