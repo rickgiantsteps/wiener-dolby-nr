@@ -202,7 +202,7 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
 
 function changeProperties() {
   var button = document.getElementById("buttonNoise");
-  if (this.appliedNoise == false) {
+  if (this.appliedNoise === false) {
     button.style.backgroundColor = "#446111"; // Change the background color
     button.style.color = "#FFF"; // Change the text color
     button.innerHTML = "Apply Noise"; // Change the button text
@@ -248,10 +248,14 @@ export default {
         //fadeOut: 1.3, // time in seconds
       },
       noisedata: Float32Array,
+      fourierframes: Float32Array,
+      timeframes: Float32Array,
+      noisefourier: Float32Array,
       filter: {
         frequency: 2000,
         gain: 0
-      }
+      },
+      out: Float32Array
     }
   },
 
@@ -263,24 +267,49 @@ export default {
 
   methods: {
 
-    freq_processing(track, noise) {
+    async freq_processing(track, noise) {
 
-      let fourierframes
-      let timeframes
+      //takes too long, we need a loading interface
 
-      for (let i=0; i<track.length; i++) {
-        console.log(track[i])
-        //zeropad works but concat here throws error for some reason
-        fourierframes[i] = fourier.fft(track[i].concat(Array(zeropad_factor-track[i].length).fill(0)))
+      console.log("track!")
+      console.log(track)
+
+      //sometimes returns 0, needs time to fill noise data not consistent, noise should always be running
+      //perhaps run but disconnected when not playing?
+      await this.playNoise(this.noise)
+      await new Promise(r => setTimeout(r, 1000));
+      this.noisefourier = await fourier.fft(this.noisedata)
+      this.stopNoise(this.noise)
+      console.log(this.noisefourier)
+
+      for (let i=0; i<10; i++) {
+        let track_array = []
+        let track_appoggio = track[i]
+        for(let ii = 0; ii < track[i].length; ii++){
+          track_array[ii] = track_appoggio[ii]
+        }
+        this.fourierframes[i] = await fourier.fft(track_array.concat(Array(zeropad_factor-track[i].length).fill(0)))
       }
 
-      //noise fft
+      console.log(this.noisefourier)
+      console.log(this.fourierframes)
 
       //filtering
 
-      for (let i=0; i<track.length; i++) {
-        timeframes[i] = fourier.ifft(fourierframes[i])
+      for (let i=0; i<10; i++) {
+        this.timeframes[i] = fourier.ifft(this.fourierframes[i])
+        //real values
+        for(let ii = 0; ii < this.timeframes[i].length; ii++){
+          this.timeframes[i][ii].pop()
+        }
       }
+
+      //     here add to out buffer, keeping track of the zero padding
+      //     out_sd[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(his.timeframes[i])
+      this.out = [0]
+
+      console.log("track!")
+      console.log(this.timeframes)
 
       //file write
 
@@ -335,8 +364,6 @@ export default {
 
     getnoisedata() {
       const bufferLength = noiseanalyser.frequencyBinCount;
-      console.log(noiseanalyser.frequencyBinCount)
-      console.log(noiseanalyser.fftSize)
       const dataArray = new Float32Array(bufferLength);
       noiseanalyser.getFloatTimeDomainData(dataArray)
       return dataArray;
@@ -349,7 +376,11 @@ export default {
       this.setGain(track);
       track.audioSource.loop = true;
       track.audioSource.start();
-      await new Promise(r => setTimeout(r, 300));
+
+      //timeout not optimal
+      //sometimes returns 0, needs time to fill noise data not consistent, noise should always be running
+      //perhaps run but disconnected when not playing?
+      await new Promise(r => setTimeout(r, 1000));
       this.noisedata = this.getnoisedata()
       console.log(this.noisedata)
     },
