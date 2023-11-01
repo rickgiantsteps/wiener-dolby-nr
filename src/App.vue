@@ -301,6 +301,8 @@ export default {
         //real values
         for(let ii = 0; ii < this.timeframes[i].length; ii++){
           this.timeframes[i][ii].pop()
+          //turns length one float array into float value
+          this.timeframes[i][ii] = parseFloat(this.timeframes[i][ii])
         }
       }
 
