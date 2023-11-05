@@ -271,6 +271,7 @@ export default {
 
       let emphfilt = []
       let deemphfilt = []
+      let temporarysonglength = 10
 
       //takes too long, we need a loading interface
 
@@ -281,17 +282,28 @@ export default {
       this.noisefourier = await fourier.fft(this.noisedata)
       this.stopNoise(this.noise)
 
-      for (let i=0; i<10; i++) {
+      //get noisy song (clean song frames + noisedata)
+      let noise_appoggio = this.noisedata
+      let noisytrackframes = []
+      for (let i = 0; i < track.length; i++) {
+        let sum = track[i].map(function (num, idx) {
+          return num + noise_appoggio[idx];
+        });
+        noisytrackframes[i] = sum
+      }
+
+      //frequency analysis of noisy song
+      for (let i=0; i<temporarysonglength; i++) {
         let track_array = []
-        let track_appoggio = track[i]
-        for(let ii = 0; ii < track[i].length; ii++){
+        let track_appoggio = noisytrackframes[i]
+        for(let ii = 0; ii < noisytrackframes[i].length; ii++){
           track_array[ii] = track_appoggio[ii]
         }
-        this.fourierframes[i] = await fourier.fft(track_array.concat(Array(zeropad_factor-track[i].length).fill(0)))
+        this.fourierframes[i] = await fourier.fft(track_array.concat(Array(zeropad_factor-noisytrackframes[i].length).fill(0)))
       }
 
       this.noisepower = this.getpower(this.noisefourier,1)
-      this.songpower = this.getpower(this.fourierframes,10)
+      this.songpower = this.getpower(this.fourierframes,temporarysonglength)
 
       //filters
       for (let i = 0; i < this.songpower.length; i++) {
@@ -303,7 +315,7 @@ export default {
 
       //filtering
 
-      for (let i=0; i<10; i++) {
+      for (let i=0; i<temporarysonglength; i++) {
         this.timeframes[i] = fourier.ifft(this.fourierframes[i])
         //real values
         for(let ii = 0; ii < this.timeframes[i].length; ii++){
