@@ -300,6 +300,7 @@ export default {
           track_array[ii] = track_appoggio[ii]
         }
         this.fourierframes[i] = await fourier.fft(track_array.concat(Array(zeropad_factor-noisytrackframes[i].length).fill(0)))
+        console.log(this.fourierframes[i])
       }
 
       this.noisepower = this.getpower(this.noisefourier,1)
@@ -314,9 +315,12 @@ export default {
       console.log(deemphfilt)
 
       //filtering
+      let filtered_song = []
+      filtered_song = this.dolbyfiltering(this.fourierframes, emphfilt, deemphfilt)
+      //console.log(filtered_song)
 
       for (let i=0; i<temporarysonglength; i++) {
-        this.timeframes[i] = fourier.ifft(this.fourierframes[i])
+        this.timeframes[i] = fourier.ifft(filtered_song[i])
         //real values
         for(let ii = 0; ii < this.timeframes[i].length; ii++){
           this.timeframes[i][ii].pop()
@@ -328,13 +332,15 @@ export default {
       //     here add to out buffer, keeping track of the zero padding
       //     out_sd[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(his.timeframes[i])
       this.out = [0]
-      console.log(this.out)
+      //console.log(this.out)
 
       //file write
 
     },
 
     getpower(freqframes, n) {
+
+      //is power just magnitude? how to multiply it with real/imag frequency data?
 
       let power = [];
       let framepower = [];
@@ -372,6 +378,30 @@ export default {
 
       return power
     },
+
+    dolbyfiltering(freqdata, emphasis, deemphasis) {
+
+      //does not work because freq data is 2D while emph/de is 1D
+
+      let filtered_song = []
+      console.log("dolby!")
+      //for some reason first two arrays are NaN??
+      console.log(freqdata)
+      for (let i=0; i<freqdata.length-1; i++) {
+        filtered_song[i] = freqdata[i].map(function (num, idx) {
+          return num * emphasis[idx];
+        })
+        filtered_song[i] = freqdata[i].map(function (num, idx) {
+          return num * 0.5;
+        })
+        filtered_song[i] = freqdata[i].map(function (num, idx) {
+          return num * deemphasis[idx];
+        })
+      }
+
+      return filtered_song
+    },
+
 
     createNoise(track) {
 
