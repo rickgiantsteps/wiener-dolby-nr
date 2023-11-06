@@ -286,10 +286,9 @@ export default {
       let noise_appoggio = this.noisedata
       let noisytrackframes = []
       for (let i = 0; i < track.length; i++) {
-        let sum = track[i].map(function (num, idx) {
+        noisytrackframes[i] = track[i].map(function (num, idx) {
           return num + noise_appoggio[idx];
-        });
-        noisytrackframes[i] = sum
+        })
       }
 
       //frequency analysis of noisy song
@@ -340,13 +339,10 @@ export default {
 
     getpower(freqframes, n) {
 
-      //is power just magnitude? how to multiply it with real/imag frequency data?
-
       let power = [];
       let framepower = [];
       let ipower = []
       let undividedpow = new Array(4096).fill(0)
-      let sum = [];
 
       if (n===1) {
         for (let i=0; i<freqframes.length; i++) {
@@ -362,12 +358,9 @@ export default {
           ipower[i] = framepower
         }
 
-        for (let i=0; i<ipower.length-1; i++) {
-          sum = ipower[i].map(function (num, idx) {
-            return num + ipower[i + 1][idx];
-          });
+        for (let i=0; i<ipower.length; i++) {
           undividedpow = undividedpow.map(function (num, idx) {
-            return num + sum[idx];
+            return num + ipower[i][idx];
           });
         }
 
@@ -391,7 +384,7 @@ export default {
         filtered_song[i] = freqdata[i].map(function (num, idx) {
           return num * emphasis[idx];
         })
-        filtered_song[i] = freqdata[i].map(function (num, idx) {
+        filtered_song[i] = freqdata[i].map(function (num) {
           return num * 0.5;
         })
         filtered_song[i] = freqdata[i].map(function (num, idx) {
