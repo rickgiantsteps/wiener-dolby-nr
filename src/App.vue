@@ -246,8 +246,8 @@ export default {
         volume: 0.05, // 0 - 1
       },
       noisedata: Float32Array,
-      fourierframes: Float32Array,
-      timeframes: Float32Array,
+      fourierframes: [],
+      timeframes: [],
       noisefourier: Float32Array,
       filter: {
         frequency: 2000,
@@ -292,34 +292,43 @@ export default {
       }
 
       //frequency analysis of noisy song
+      this.fourierframes = []
+
       for (let i=0; i<temporarysonglength; i++) {
         let track_array = []
         let track_appoggio = noisytrackframes[i]
         for(let ii = 0; ii < noisytrackframes[i].length; ii++){
           track_array[ii] = track_appoggio[ii]
         }
-        this.fourierframes[i] = await fourier.fft(track_array.concat(Array(zeropad_factor-noisytrackframes[i].length).fill(0)))
-        console.log(this.fourierframes[i])
+        this.fourierframes.push(fourier.fft(track_array.concat(Array(zeropad_factor-noisytrackframes[i].length).fill(0))))
       }
+
 
       this.noisepower = this.getpower(this.noisefourier,1)
       this.songpower = this.getpower(this.fourierframes,temporarysonglength)
 
-      //filters
+      //filters, made 2d for correct product with signal fft
       for (let i = 0; i < this.songpower.length; i++) {
-        emphfilt[i] = Math.sqrt(this.noisepower[i] / this.songpower[i]);
-        deemphfilt[i] = Math.sqrt((2*this.songpower[i]) / this.noisepower[i]);
+        emphfilt.push([Math.sqrt(this.noisepower[i] / this.songpower[i]),1]);
+        deemphfilt.push([Math.sqrt((2*this.songpower[i]) / this.noisepower[i]),1]);
       }
-      console.log(emphfilt)
-      console.log(deemphfilt)
 
       //filtering
       let filtered_song = []
       filtered_song = this.dolbyfiltering(this.fourierframes, emphfilt, deemphfilt)
-      //console.log(filtered_song)
 
-      for (let i=0; i<temporarysonglength; i++) {
-        this.timeframes[i] = fourier.ifft(filtered_song[i])
+      this.timeframes = []
+      let timeframe = []
+
+      for (let i=0; i<filtered_song.length; i++) {
+        timeframe = []
+        for(let k = 0; k < filtered_song[i].length; k++) {
+          timeframe.push(fourier.ifft(filtered_song[i][k]))
+        }
+        //timeframe is NaN, something wrong with ifft
+        console.log(timeframe)
+        this.timeframes.push(timeframe)
+
         //real values
         for(let ii = 0; ii < this.timeframes[i].length; ii++){
           this.timeframes[i][ii].pop()
@@ -374,22 +383,20 @@ export default {
 
     dolbyfiltering(freqdata, emphasis, deemphasis) {
 
-      //does not work because freq data is 2D while emph/de is 1D
-
       let filtered_song = []
+      let filtered_song_frame = []
+      let res1, res2
+
       console.log("dolby!")
-      //for some reason first two arrays are NaN??
-      console.log(freqdata)
-      for (let i=0; i<freqdata.length-1; i++) {
-        filtered_song[i] = freqdata[i].map(function (num, idx) {
-          return num * emphasis[idx];
-        })
-        filtered_song[i] = freqdata[i].map(function (num) {
-          return num * 0.5;
-        })
-        filtered_song[i] = freqdata[i].map(function (num, idx) {
-          return num * deemphasis[idx];
-        })
+
+      for (let i=0; i<freqdata.length; i++) {
+        filtered_song_frame = []
+        for (let k=0; k<freqdata[i].length; k++) {
+          res1 = freqdata[i][k][0] * emphasis[k][0] * 0.5 * deemphasis[k][0]
+          res2 = freqdata[i][k][1] * emphasis[k][1] * 0.5 * deemphasis[k][1]
+          filtered_song_frame.push([res1, res2])
+        }
+        filtered_song.push(filtered_song_frame)
       }
 
       return filtered_song
