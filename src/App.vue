@@ -267,7 +267,7 @@ export default {
 
   methods: {
 
-    async freq_processing(track, noise) {
+    async freq_processing(track) {
 
       let emphfilt = []
       let deemphfilt = []
@@ -318,17 +318,9 @@ export default {
       filtered_song = this.dolbyfiltering(this.fourierframes, emphfilt, deemphfilt)
 
       this.timeframes = []
-      let timeframe = []
 
       for (let i=0; i<filtered_song.length; i++) {
-        timeframe = []
-        for(let k = 0; k < filtered_song[i].length; k++) {
-          timeframe.push(fourier.ifft(filtered_song[i][k]))
-        }
-        //timeframe is NaN, something wrong with ifft
-        console.log(timeframe)
-        this.timeframes.push(timeframe)
-
+        this.timeframes.push(fourier.ifft(filtered_song[i]))
         //real values
         for(let ii = 0; ii < this.timeframes[i].length; ii++){
           this.timeframes[i][ii].pop()
@@ -336,6 +328,8 @@ export default {
           this.timeframes[i][ii] = parseFloat(this.timeframes[i][ii])
         }
       }
+
+      console.log(this.timeframes)
 
       //     here add to out buffer, keeping track of the zero padding
       //     out_sd[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(his.timeframes[i])
@@ -469,7 +463,7 @@ export default {
       //perhaps run but disconnected when not playing?
       await new Promise(r => setTimeout(r, 1000));
       this.noisedata = this.getnoisedata()
-      console.log(this.noisedata)
+      console.log("noise:", this.noisedata)
     },
 
     selectUpdate (newData) {
