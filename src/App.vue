@@ -244,6 +244,8 @@ export default {
       selected: "0",
       noise: {
         volume: 0.05, // 0 - 1
+        playing: false,
+        created: false
       },
       noisedata: Float32Array,
       fourierframes: [],
@@ -260,9 +262,9 @@ export default {
   },
 
   beforeMount() {
-    this.buildTrack(this.noise);
-    this.createNoise(this.noise);
-    this.setGain(this.noise);
+    //this would fix the noise data problem, but audiocontext isn't allowed because it needs user interaction
+    //                                       to be initialized
+    //this.buildTrack(this.noise);
   },
 
   methods: {
@@ -275,10 +277,7 @@ export default {
 
       //takes too long, we need a loading interface
 
-      //sometimes returns 0, needs time to fill noise data not consistent, noise should always be running
-      //perhaps run but disconnected when not playing?
-      await this.playNoise(this.noise)
-      await new Promise(r => setTimeout(r, 1000));
+      this.noisedata = this.getnoisedata()
       this.noisefourier = await fourier.fft(this.noisedata)
       this.stopNoise(this.noise)
 
@@ -396,7 +395,6 @@ export default {
       return filtered_song
     },
 
-
     createNoise(track) {
 
       const bufferSize = 2 * audioContext.sampleRate;
@@ -410,12 +408,13 @@ export default {
       track.audioSource.buffer = noiseBuffer;
     },
 
-    stopNoise(track) {
-      try {
-        if (track.audioSource) {
-          track.audioSource.stop();
-        }
-      } catch(e) {}
+    stopNoise() {
+      noiseanalyser.disconnect()
+      this.noise.playing = false
+
+      //test
+      this.noisedata = this.getnoisedata()
+      console.log("noise:", this.noisedata)
     },
 
     buildTrack(track) {
@@ -428,7 +427,11 @@ export default {
       track.audioSource.connect(track.gainNode);
       track.gainNode.connect(this.biquadFilter);
       this.biquadFilter.connect(noiseanalyser);
-      noiseanalyser.connect(audioContext.destination)
+      this.createNoise(track);
+      this.setGain(track);
+      track.audioSource.loop = true;
+      track.audioSource.start();
+      this.noise.created = true;
     },
 
     setFilter(biquadFilter) {
@@ -441,6 +444,7 @@ export default {
       track.volume = (track.volume >= 0) ? track.volume : this.noise.volume;
 
       track.gainNode.gain.setValueAtTime(this.noise.volume, audioContext.currentTime);
+
     },
 
     getnoisedata() {
@@ -451,17 +455,15 @@ export default {
     },
 
     async playNoise(track) {
-      this.stopNoise(track);
-      this.buildTrack(track);
-      this.createNoise(track);
-      this.setGain(track);
-      track.audioSource.loop = true;
-      track.audioSource.start();
+      if (!this.noise.created) {
+        await this.buildTrack(track)
+      }
 
-      //timeout not optimal
-      //sometimes returns 0, needs time to fill noise data not consistent, noise should always be running
-      //perhaps run but disconnected when not playing?
-      await new Promise(r => setTimeout(r, 1000));
+      this.stopNoise(track);
+      this.noise.playing = true
+      noiseanalyser.connect(audioContext.destination)
+
+      //test
       this.noisedata = this.getnoisedata()
       console.log("noise:", this.noisedata)
     },
