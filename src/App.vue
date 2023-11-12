@@ -105,11 +105,11 @@
 
       <div class="place-items-center grid grid-cols-3 gap-x-0">
         <audioplayer :selected="selected" @update="selectUpdate" @frame="songframed"></audioplayer>
-        <form class="button-col">
+        <div class="button-col">
           <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
           <!--<button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button> -->
-          <button id="buttonNoise" class="h-fit mt-2 shadow-2xl shadow-[#6da4ba] font-bold py-2 px-4 rounded-full" @click="changeProperties()">Apply Noise</button>
-        </form>
+          <button id="buttonNoise" class="h-fit mt-2 shadow-2xl shadow-[#6da4ba] font-bold py-2 px-4 rounded-full" @click="changeProperties(); buildTrack(noise)">Apply Noise</button>
+        </div>
         <audioplayer download="true" secondplayer="true"></audioplayer>
       </div>
 
@@ -261,11 +261,6 @@ export default {
     }
   },
 
-  beforeMount() {
-    //this would fix the noise data problem, but audiocontext isn't allowed because it needs user interaction
-    //                                       to be initialized
-    //this.buildTrack(this.noise);
-  },
 
   methods: {
 
@@ -418,20 +413,22 @@ export default {
     },
 
     buildTrack(track) {
-      track.audioSource = audioContext.createBufferSource();
-      track.gainNode = audioContext.createGain();
-      this.biquadFilter = audioContext.createBiquadFilter();
-      this.biquadFilter.type = "highpass";
-      this.setFilter(this.biquadFilter)
-      noiseanalyser.fftSize = zeropad_factor*2;
-      track.audioSource.connect(track.gainNode);
-      track.gainNode.connect(this.biquadFilter);
-      this.biquadFilter.connect(noiseanalyser);
-      this.createNoise(track);
-      this.setGain(track);
-      track.audioSource.loop = true;
-      track.audioSource.start();
-      this.noise.created = true;
+      if (!this.noise.created) {
+        track.audioSource = audioContext.createBufferSource();
+        track.gainNode = audioContext.createGain();
+        this.biquadFilter = audioContext.createBiquadFilter();
+        this.biquadFilter.type = "highpass";
+        this.setFilter(this.biquadFilter)
+        noiseanalyser.fftSize = zeropad_factor * 2;
+        track.audioSource.connect(track.gainNode);
+        track.gainNode.connect(this.biquadFilter);
+        this.biquadFilter.connect(noiseanalyser);
+        this.createNoise(track);
+        this.setGain(track);
+        track.audioSource.loop = true;
+        track.audioSource.start();
+        this.noise.created = true;
+      }
     },
 
     setFilter(biquadFilter) {
@@ -454,12 +451,11 @@ export default {
       return dataArray;
     },
 
-    async playNoise(track) {
+    playNoise(track) {
       if (!this.noise.created) {
-        await this.buildTrack(track)
+        this.buildTrack(track)
       }
 
-      this.stopNoise(track);
       this.noise.playing = true
       noiseanalyser.connect(audioContext.destination)
 
@@ -474,7 +470,9 @@ export default {
 
     songframed (newFrames) {
       this.songframes = newFrames
-      this.freq_processing(this.songframes, 0)
+
+      //should not be here (should be activated by apply NR button), just to test
+      this.freq_processing(this.songframes)
     }
   }
 }
