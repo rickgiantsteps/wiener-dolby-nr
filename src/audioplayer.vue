@@ -255,7 +255,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="grid grid-rows-2 bg-amber-700">
+  <div class="grid grid-rows-2">
     <div v-if="download" class='file file--upload'>
       <label for='down-file'>
         <!--
