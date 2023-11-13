@@ -255,10 +255,11 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="grid grid-rows-2">
-    <div v-if="download" class='file'>
+  <div class="grid grid-rows-2 bg-amber-700">
+    <div v-if="download" class='file file--upload'>
       <label for='down-file'>
-        <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!--
+        <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
           <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
           <g id="SVGRepo_iconCarrier">
@@ -267,14 +268,19 @@ export default defineComponent({
           </g>
         </svg>
         Download audio file
+        -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-down-fill" viewBox="0 0 16 16"> <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z"/> </svg> ⠀
+        Download audio file
       </label>
       <button ref="downsong" id='down-file'/>
     </div>
     <div v-else class='file file--upload'>
       <label for='input-file'>
-        <svg class="icon">
+        <!--<svg class="icon">
           <use xlink:href="#icon-cloud"></use>
-        </svg>⠀Upload audio file
+        </svg> -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up-fill" viewBox="0 0 16 16"> <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z"/> </svg>
+        Upload audio file
       </label>
       <input v-on:change="song_onFileChanged" ref="newsong" id='input-file' type="file" accept="audio/*"/>
     </div>
@@ -320,6 +326,7 @@ export default defineComponent({
         <path d="M0 0h24v24H0z" fill="none"/>
         <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
       </symbol>
+
       <symbol id="icon-pause" viewBox="0 0 32 32">
         <title>icon-pause</title>
         <path d="M16 0.32c-8.64 0-15.68 7.040-15.68 15.68s7.040 15.68 15.68 15.68 15.68-7.040 15.68-15.68-7.040-15.68-15.68-15.68zM16 29.216c-7.296 0-13.216-5.92-13.216-13.216s5.92-13.216 13.216-13.216 13.216 5.92 13.216 13.216-5.92 13.216-13.216 13.216z"></path>
