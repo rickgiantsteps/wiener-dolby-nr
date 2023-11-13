@@ -77,9 +77,23 @@
 }
 
 .button-col{
+    height: auto;
     display: flex;
     justify-content: center;
     flex-direction: column;
+    align-items: center;
+}
+
+.circle-button {
+    height:100px;
+    width:100px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 1.5;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    cursor: pointer;
 }
 
 .synth-type {

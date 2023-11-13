@@ -44,7 +44,6 @@ export default defineComponent({
       duration: null,
       currentTime: null,
       isTimerPlaying: false,
-      appliedNoise: false,
       tracks: [
         {
           name: "Dancing Queen",

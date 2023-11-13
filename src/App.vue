@@ -105,10 +105,17 @@
 
       <div class="place-items-center grid grid-cols-3 gap-x-0">
         <audioplayer :selected="selected" @update="selectUpdate" @frame="songframed"></audioplayer>
-        <div class="button-col">
-          <button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
-          <!--<button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button> -->
-          <button id="buttonNoise" class="h-fit mt-2 shadow-2xl shadow-[#6da4ba] font-bold py-2 px-4 rounded-full" @click="changeProperties(); buildTrack(noise)">Apply Noise</button>
+        <div class="mt-8 button-col">
+          <!--<button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
+          <button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button>
+          <button id="buttonNoise" class="h-fit mt-8 shadow-2xl shadow-[#6da4ba] font-bold py-2 px-4 rounded-full" @click="buildTrack(noise)">Apply Noise</button>-->
+          <button id="buttonNoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="playNoise(noise)">
+            Apply <br> Dolby <br> NR
+          </button>
+          <button id="buttonNoise" class="mt-8 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="buildTrack(noise)">
+            Apply <br> Noise
+          </button>
+
         </div>
         <audioplayer download="true" secondplayer="true"></audioplayer>
       </div>
@@ -200,20 +207,6 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
   document.body.classList.toggle("dark:bg-[#446573]");
 }
 
-function changeProperties() {
-  var button = document.getElementById("buttonNoise");
-  if (this.appliedNoise === false) {
-    button.style.backgroundColor = "#446111"; // Change the background color
-    button.style.color = "#FFF"; // Change the text color
-    button.innerHTML = "Apply Noise"; // Change the button text
-    this.appliedNoise=true;
-  }else{
-    button.style.backgroundColor = "#F00"; // Change the background color
-    button.style.color = "#FFF"; // Change the text color
-    button.innerHTML = "Clicked"; // Change the button text
-    this.appliedNoise=false;
-  }
-}
 
 function darkModeSwitch() {
   document.documentElement.classList.toggle("dark");
@@ -257,12 +250,28 @@ export default {
       },
       noisepower: null,
       songpower: null,
+      appliedNoise: false,
       out: Float32Array
     }
   },
 
 
   methods: {
+
+    async changeProperties() {
+      var button = document.getElementById("buttonNoise");
+      if (this.noise.playing = false) {
+        button.style.backgroundColor = "#446111"; // Change the background color
+        button.style.color = "#FFF"; // Change the text color
+        button.innerHTML = "Apply Noise"; // Change the button text
+        this.noise.playing = true;
+      }else{
+        button.style.backgroundColor = "#F00"; // Change the background color
+        button.style.color = "#FFF"; // Change the text color
+        button.innerHTML = "Clicked"; // Change the button text
+        this.noise.playing = false;
+      }
+    },
 
     async freq_processing(track) {
 
