@@ -1,3 +1,4 @@
+<!--suppress CheckImageSize -->
 <template>
 
   <header class="flex justify-center">
@@ -58,7 +59,7 @@
           <div class="relative p-5 bg-white dark:bg-gray-700 dark:text-white rounded-sm">
             <div class="flex flex-col mb-2 lg:items-center lg:flex-row">
               <div class="flex items-center justify-center w-10 h-10 mb-4 mr-2 rounded-full bg-indigo-50 lg:mb-0">
-                <img class="object-cover" src="./components/icons/dolby.png">
+                <img alt="Dolby logo" class="object-cover" src="./components/icons/dolby.png">
               </div>
               <h6 class="font-extrabold leading-5 text-[#6da4ba] dark:text-white">Dolby-NR</h6>
             </div>
@@ -77,7 +78,7 @@
           <div class="relative p-5 bg-white bg-cover dark:bg-gray-700 dark:text-white rounded-sm">
             <div class="flex flex-col mb-2 lg:items-center lg:flex-row">
               <div class="w-10 h-10 mb-4 mr-2 rounded-full bg-indigo-50 lg:mb-0">
-                <img class="object-cover" src="./components/icons/filter.png">
+                <img alt="Filter" class="object-cover" src="./components/icons/filter.png">
               </div>
               <h6 class="font-extrabold leading-5 text-[#6da4ba] dark:text-white ">Wiener Filter</h6>
             </div>
@@ -251,16 +252,16 @@ export default {
       noisepower: null,
       songpower: null,
       appliedNoise: false,
-      out: Float32Array
+      out: []
     }
   },
 
 
   methods: {
 
-    async changeProperties() {
-      var button = document.getElementById("buttonNoise");
-      if (this.noise.playing = false) {
+    /*async changeProperties() {
+      let button = document.getElementById("buttonNoise");
+      if (this.noise.playing === false) {
         button.style.backgroundColor = "#446111"; // Change the background color
         button.style.color = "#FFF"; // Change the text color
         button.innerHTML = "Apply Noise"; // Change the button text
@@ -271,7 +272,7 @@ export default {
         button.innerHTML = "Clicked"; // Change the button text
         this.noise.playing = false;
       }
-    },
+    },*/
 
     async freq_processing(track) {
 
@@ -336,8 +337,21 @@ export default {
 
       //     here add to out buffer, keeping track of the zero padding
       //     out_sd[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(his.timeframes[i])
-      this.out = [0]
-      //console.log(this.out)
+      this.out = this.timeframes[0]
+      console.log(this.out)
+      let hop = windowsize/4
+      for(let i = 1; i < filtered_song.length; i++) {
+        let out_appoggio = this.out.splice(i*hop)
+        let slice_one = this.timeframes[i].slice(0, zeropad_factor-hop)
+        let slice_two = this.timeframes[i].slice(zeropad_factor-hop)
+        let overlap = out_appoggio.map(function (num, idx) {
+          return num + slice_one[idx];
+        })
+        this.out = this.out.concat(overlap).concat(slice_two)
+        console.log("frame "+i)
+        console.log(this.out)
+      }
+      console.log(this.out)
 
       //file write
 
