@@ -110,7 +110,7 @@
           <!--<button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
           <button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button>
           <button id="buttonNoise" class="h-fit mt-8 shadow-2xl shadow-[#6da4ba] font-bold py-2 px-4 rounded-full" @click="buildTrack(noise)">Apply Noise</button>-->
-          <button id="buttonNoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="playNoise(noise)">
+          <button id="buttonNoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="freq_processing(songframes)">
             Apply <br> Dolby <br> NR
           </button>
           <button id="buttonNoise" class="mt-8 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="buildTrack(noise)">
@@ -224,6 +224,14 @@ function darkModeSwitch() {
 
 <script>
 import * as fourier from 'fft-js'
+import * as lamejs from "lamejs"
+import MPEGMode from 'lamejs/src/js/MPEGMode';
+import Lame from 'lamejs/src/js/Lame';
+import BitStream from 'lamejs/src/js/BitStream';
+window.MPEGMode = MPEGMode;
+window.Lame = Lame;
+window.BitStream = BitStream;
+
 const audioContext = new(window.AudioContext);
 let windowsize = 1024
 let zeropad_factor = windowsize * 4
@@ -278,7 +286,7 @@ export default {
 
       let emphfilt = []
       let deemphfilt = []
-      let temporarysonglength = 10
+      let temporarysonglength = 300
 
       //takes too long, we need a loading interface
 
@@ -354,7 +362,34 @@ export default {
       console.log(this.out)
 
       //file write
+      let channels = 1; //1 for mono or 2 for stereo
+      let sampleRate = 44100; //44.1khz (normal mp3 sample rate)
+      let kbps = 128; //encode 128kbps mp3
+      let mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, kbps);
+      let sampleBlockSize = 1152;
 
+      let mp3Data = [];
+      for (let i = 0; i < this.out.length; i += sampleBlockSize) {
+        let sampleChunk = this.out.slice(i, i + sampleBlockSize);
+        console.log(sampleChunk)
+        let mp3buf = mp3encoder.encodeBuffer(sampleChunk);
+        console.log(mp3buf)
+        if (mp3buf.length > 0) {
+          mp3Data.push(mp3buf);
+        }
+      }
+
+      let mp3buf = mp3encoder.flush();   //finish writing mp3
+      console.log(mp3buf)
+
+      if (mp3buf.length > 0) {
+        mp3Data.push(mp3buf);
+      }
+
+      console.log(mp3Data)
+      let blob = new Blob(mp3Data, {type: 'audio/mp3'});
+      let url = window.URL.createObjectURL(blob);
+      console.log('MP3 URl: ', url);
     },
 
     getpower(freqframes, n) {
@@ -493,9 +528,6 @@ export default {
 
     songframed (newFrames) {
       this.songframes = newFrames
-
-      //should not be here (should be activated by apply NR button), just to test
-      this.freq_processing(this.songframes)
     }
   }
 }
