@@ -224,13 +224,15 @@ function darkModeSwitch() {
 
 <script>
 import * as fourier from 'fft-js'
-import * as lamejs from "lamejs"
-import MPEGMode from 'lamejs/src/js/MPEGMode';
-import Lame from 'lamejs/src/js/Lame';
-import BitStream from 'lamejs/src/js/BitStream';
-window.MPEGMode = MPEGMode;
-window.Lame = Lame;
-window.BitStream = BitStream;
+//import * as lamejs from "lamejs"
+//import MPEGMode from 'lamejs/src/js/MPEGMode';
+//import Lame from 'lamejs/src/js/Lame';
+//import BitStream from 'lamejs/src/js/BitStream';
+//window.MPEGMode = MPEGMode;
+//.Lame = Lame;
+//window.BitStream = BitStream;
+
+//import encodeWAV from "audiobuffer-to-wav"
 
 const audioContext = new(window.AudioContext);
 let windowsize = 1024
@@ -286,10 +288,9 @@ export default {
 
       let emphfilt = []
       let deemphfilt = []
-      let temporarysonglength = 300
+      let temporarysonglength = 100
 
-      //takes too long, we need a loading interface
-
+      //takes too long, maybe add number to track progress
       this.noisedata = this.getnoisedata()
       this.noisefourier = await fourier.fft(this.noisedata)
       this.stopNoise(this.noise)
@@ -362,6 +363,7 @@ export default {
       console.log(this.out)
 
       //file write
+      /*
       let channels = 1; //1 for mono or 2 for stereo
       let sampleRate = 44100; //44.1khz (normal mp3 sample rate)
       let kbps = 128; //encode 128kbps mp3
@@ -390,6 +392,20 @@ export default {
       let blob = new Blob(mp3Data, {type: 'audio/mp3'});
       let url = window.URL.createObjectURL(blob);
       console.log('MP3 URl: ', url);
+       */
+
+
+      const myArrayBuffer = audioContext.createBuffer(1, this.out.length, 22050);
+      const nowBuffering = myArrayBuffer.getChannelData(0);
+      for (let i = 0; i < myArrayBuffer.length; i++) {
+        nowBuffering[i] = this.out[i]
+      }
+
+      const source = audioContext.createBufferSource();
+      source.buffer = myArrayBuffer;
+      source.connect(audioContext.destination);
+      source.start();
+
     },
 
     getpower(freqframes, n) {
