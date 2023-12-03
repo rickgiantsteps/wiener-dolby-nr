@@ -92,6 +92,15 @@
       </div>
     </div>
 
+    <!-- UPLOAD FORM FLASK -->
+    <div>
+      <form @submit.prevent="uploadAudio" enctype="multipart/form-data">
+        <input type="file" ref="audioInput" accept="audio/*" />
+        <button type="submit">Upload Audio</button>
+      </form>
+    </div>
+    <!--  END UPLOAD FORM FLASK -->
+
     <div class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pt-5">
       <div class="h-10 grid grid-rows-2 place-items-center mt-3 mb-11">
         <label for="songs" class="justify-center font-bold block mb-7 text-sm text-[#6da4ba] dark:text-white">Select a demo song</label>
@@ -220,10 +229,12 @@ function darkModeSwitch() {
     this.darkOn = false;
   }
 }
+
 </script>
 
 <script>
 import * as fourier from 'fft-js'
+//import axios from 'axios';
 //import * as lamejs from "lamejs"
 //import MPEGMode from 'lamejs/src/js/MPEGMode';
 //import Lame from 'lamejs/src/js/Lame';
@@ -243,6 +254,7 @@ export default {
 
   data() {
     return {
+      processedFilename: null,
       biquadFilter: null,
       songframes: null,
       selected: "0",
@@ -269,6 +281,47 @@ export default {
 
   methods: {
 
+    //////////////////////////////// FLASK //////////////////////////////////////////////
+    uploadAudio() {
+      const fileInput = this.$refs.audioInput;
+      const file = fileInput.files[0];
+
+      if (file) {
+        this.handleFileUpload(file);
+      } else {
+        alert('Please select an audio file');
+      }
+    },
+    handleFileUpload(file) {
+      const formData = new FormData();
+      formData.append('audio', file);
+
+      fetch('http://localhost:5000/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Upload successful', data);
+            if (data.processed_filename) {
+              this.downloadProcessedFile(data.processed_filename);
+            } else {
+              console.error('Processed filename is undefined');
+            }
+          })
+          .catch(error => {
+            console.error('Error uploading file', error);
+          });
+    },
+    /*
+    downloadProcessedFile(filename) {
+      // Create a link and trigger the download
+      const link = document.createElement('a');
+      link.href = `http://localhost:5000/api/download/${filename}`;
+      link.download = filename;
+      link.click();
+    },
+    */
     /*async changeProperties() {
       let button = document.getElementById("buttonNoise");
       if (this.noise.playing === false) {
