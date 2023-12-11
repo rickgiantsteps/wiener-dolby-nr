@@ -114,7 +114,7 @@
       </div>
 
       <div class="place-items-center grid grid-cols-3 gap-x-0">
-        <audioplayer :selected="selected" @update="selectUpdate" @frame="songframed"></audioplayer>
+        <audioplayer :selected="selected" @update="selectUpdate" @frame="songframed" @play="this.playNoise(noise)" @pause="this.stopNoise(noise)"></audioplayer>
         <div class="mt-8 button-col">
           <!--<button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
           <button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button>
@@ -234,6 +234,7 @@ function darkModeSwitch() {
 
 <script>
 import * as fourier from 'fft-js'
+import audioplayer from "@/audioplayer.vue";
 //import axios from 'axios';
 //import * as lamejs from "lamejs"
 //import MPEGMode from 'lamejs/src/js/MPEGMode';
@@ -251,6 +252,7 @@ let zeropad_factor = windowsize * 4
 let noiseanalyser = audioContext.createAnalyser();
 export default {
   name: 'App',
+  components: {audioplayer},
 
   data() {
     return {
@@ -540,6 +542,7 @@ export default {
     },
 
     buildTrack(track) {
+      this.appliedNoise = true
       if (!this.noise.created) {
         track.audioSource = audioContext.createBufferSource();
         track.gainNode = audioContext.createGain();
@@ -593,11 +596,13 @@ export default {
 
     selectUpdate (newData) {
       this.selected = newData
+      this.appliedNoise = false
     },
 
-    songframed (newFrames) {
+   /* songframed (newFrames) {
       this.songframes = newFrames
-    }
+      this.appliedNoise = false
+    }*/
   }
 }
 

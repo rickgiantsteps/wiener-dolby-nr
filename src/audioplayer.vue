@@ -78,7 +78,7 @@ export default defineComponent({
   },
 
   methods: {
-    async divideFrames(file) {
+  /*  async divideFrames(file) {
       const audioContext = new (window.AudioContext)();
       const fileReader = new FileReader();
 
@@ -106,7 +106,7 @@ export default defineComponent({
         frames.push(frameData);
       }
       return frames;
-    },
+    },*/
 
      async song_onFileChanged() {
          if (!this.secondplayer) {
@@ -114,7 +114,7 @@ export default defineComponent({
            this.uploadedFile = this.$refs.newsong.files[0];
 
            // Divide the uploaded audio file into frames
-           this.songframes = await this.divideFrames(this.uploadedFile);
+           //this.songframes = await this.divideFrames(this.uploadedFile);
 
            await mmb.parseBlob(this.uploadedFile).then(metadata => {
              this.newname = metadata.common.title;
@@ -139,6 +139,7 @@ export default defineComponent({
 
     async songSelect(){
       if (!this.secondplayer) {
+        this.$emit("update", this.selected)
         this.currentTrackIndex = this.selected
         this.currentTrack = this.tracks[this.selected];
         this.generateTime()
@@ -147,16 +148,22 @@ export default defineComponent({
         const response = await fetch(this.currentTrack.source);
         const blob = await response.blob();
         const file = new File([blob], 'song.mp3', {type: 'audio/mpeg'});
-        this.songframes = await this.divideFrames(file)
+        //this.songframes = await this.divideFrames(file)
       }
     },
 
     play() {
       if (this.audio.paused) {
         this.audio.play();
+        if (!this.secondplayer && this.$parent.$data.appliedNoise) {
+          this.$emit('play');
+      }
         this.isTimerPlaying = true;
       } else {
         this.audio.pause();
+        if (!this.secondplayer && this.$parent.$data.appliedNoise) {
+          this.$emit('pause');
+        }
         this.isTimerPlaying = false;
       }
     },
