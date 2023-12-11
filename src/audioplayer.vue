@@ -30,6 +30,16 @@ export default defineComponent({
       },
       deep: true
     },
+    isTimerPlaying: {
+      handler: function (newVal) {
+        this.$emit('timer', newVal);
+        if (newVal&&!this.secondplayer&&this.$parent.$data.appliedNoise) {
+          this.$emit('play');
+        } else if (!this.secondplayer && this.$parent.$data.appliedNoise) {
+          this.$emit('pause');
+        }
+      },
+    }
   },
 
   data() {
@@ -37,6 +47,10 @@ export default defineComponent({
       songframes: null,
       newname: "Unknown title",
       newartist: "Unknown artist",
+      secondtrack: {
+        artist: "Apply DOLBY NR",
+        name: "No data"
+      },
       uploadedFile : null,
       audio: null,
       circleLeft: null,
@@ -48,22 +62,22 @@ export default defineComponent({
         {
           name: "Dancing Queen",
           artist: "ABBA",
-          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/ABBA%20-%20Dancing%20Queen%20%5BCassette%20Rip%5D.mp3",
+          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/ABBA%20-%20Dancing%20Queen.mp3",
         },
         {
           name: "Alberto Balsalm",
           artist: "Aphex Twin",
-          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Aphex%20Twin%20-%20Alberto%20Balsalm%20%5BCassette%20Rip%5D.mp3",
+          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Aphex%20Twin%20-%20Alberto%20Balsalm.mp3",
         },
         {
           name: "Heart-Shaped Box",
           artist: "Nirvana",
-          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Nirvana%20-%20Heart-Shaped%20Box%20%5BCassette%20Rip%5D.mp3",
+          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Nirvana%20-%20Heart-Shaped%20Box.mp3",
         },
         {
           name: "Smooth Operator",
           artist: "Sade",
-          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Sade%20-%20Smooth%20Operator%20%5BCassette%20Rip%5D.mp3",
+          source: "https://raw.githubusercontent.com/rickgiantsteps/wiener-dolby-nr/master/src/components/demo-songs/Sade%20-%20Smooth%20Operator.mp3",
         },
         {
           name: "",
@@ -139,6 +153,7 @@ export default defineComponent({
 
     async songSelect(){
       if (!this.secondplayer) {
+        this.$emit("pause")
         this.$emit("update", this.selected)
         this.currentTrackIndex = this.selected
         this.currentTrack = this.tracks[this.selected];
@@ -155,15 +170,9 @@ export default defineComponent({
     play() {
       if (this.audio.paused) {
         this.audio.play();
-        if (!this.secondplayer && this.$parent.$data.appliedNoise) {
-          this.$emit('play');
-      }
         this.isTimerPlaying = true;
       } else {
         this.audio.pause();
-        if (!this.secondplayer && this.$parent.$data.appliedNoise) {
-          this.$emit('pause');
-        }
         this.isTimerPlaying = false;
       }
     },
@@ -255,7 +264,7 @@ export default defineComponent({
       const response = await fetch(this.audio.src);
       const blob = await response.blob();
       const file = new File([blob], 'song.mp3', {type: 'audio/mpeg'});
-      this.songframes = await this.divideFrames(file)
+      //this.songframes = await this.divideFrames(file)
     }
   }
 })
@@ -263,7 +272,7 @@ export default defineComponent({
 
 <template>
   <div class="grid grid-rows-2">
-    <div v-if="download" class='file file--upload'>
+    <div v-if="download" class='file file--upload my-12'>
       <label for='down-file'>
         <!--
         <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -274,8 +283,7 @@ export default defineComponent({
           </path>
           </g>
         </svg>
-        Download audio file
-        -->
+        Download audio file        -->
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-down-fill" viewBox="0 0 16 16"> <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z"/> </svg> ⠀
         Download audio file
       </label>
@@ -286,7 +294,7 @@ export default defineComponent({
         <!--<svg class="icon">
           <use xlink:href="#icon-cloud"></use>
         </svg> -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up-fill" viewBox="0 0 16 16"> <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z"/> </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up-fill mr-3" viewBox="0 0 16 16"> <path d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 5.146a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2z"/> </svg>
         Upload audio file
       </label>
       <input v-on:change="song_onFileChanged" ref="newsong" id='input-file' type="file" accept="audio/*"/>
@@ -295,9 +303,13 @@ export default defineComponent({
       <div class="player__top">
         <div class="player-controls">
           <div>
-            <div class="album-info" v-if="currentTrack">
+            <div class="album-info" v-if="!secondplayer">
               <div class="album-info__name">{{ currentTrack.artist }}</div>
               <div class="album-info__track">{{ currentTrack.name }}</div>
+            </div>
+            <div class="album-info" v-else>
+              <div class="album-info__name">{{ secondtrack.artist }}</div>
+              <div class="album-info__track">{{ secondtrack.name }}</div>
             </div>
             <div class="player-controls__item" @click="prevTrack">
               <svg class="icon">

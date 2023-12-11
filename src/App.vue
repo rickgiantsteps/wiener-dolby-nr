@@ -114,7 +114,7 @@
       </div>
 
       <div class="place-items-center grid grid-cols-3 gap-x-0">
-        <audioplayer :selected="selected" @update="selectUpdate" @frame="songframed" @play="this.playNoise(noise)" @pause="this.stopNoise(noise)"></audioplayer>
+        <audioplayer :selected="selected" @update="selectUpdate" @frame="songframed" @timer="playerstate" @play="this.playNoise(noise)" @pause="this.stopNoise(noise)"></audioplayer>
         <div class="mt-8 button-col">
           <!--<button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
           <button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button>
@@ -276,6 +276,7 @@ export default {
       noisepower: null,
       songpower: null,
       appliedNoise: false,
+      songplaying: false,
       out: []
     }
   },
@@ -533,8 +534,10 @@ export default {
     },
 
     stopNoise() {
-      noiseanalyser.disconnect()
-      this.noise.playing = false
+      if (!this.songplaying) {
+        noiseanalyser.disconnect()
+        this.noise.playing = false
+      }
 
       //test
       this.noisedata = this.getnoisedata()
@@ -558,6 +561,10 @@ export default {
         track.audioSource.loop = true;
         track.audioSource.start();
         this.noise.created = true;
+      }
+
+      if(this.songplaying) {
+        this.playNoise(this.noise)
       }
     },
 
@@ -603,6 +610,10 @@ export default {
       this.songframes = newFrames
       this.appliedNoise = false
     }*/
+    playerstate(newVal) {
+      console.log(newVal)
+      this.songplaying=newVal
+    }
   }
 }
 
