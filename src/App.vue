@@ -101,13 +101,13 @@
     </div>
     <!--  END UPLOAD FORM FLASK -->
 
-    <!-- DENOISE FORM FLASK -->
+    <!-- DENOISE FORM FLASK
     <div>
       <button id="buttonDenoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="denoiseAudio()">
         Denoise <br> Audio <br>
       </button>
     </div>
-    <!--  END DENOISE FORM FLASK -->
+    END DENOISE FORM FLASK -->
 
     <div class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pt-5">
       <div class="h-10 grid grid-rows-2 place-items-center mt-3 mb-11">
@@ -130,9 +130,13 @@
           <button id="buttonNoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="freq_processing(songframes)">
             Apply <br> Dolby <br> NR
           </button>
-          <button id="buttonNoise" class="mt-8 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="buildTrack(noise)">
+          <button id="buttonNoise" class="mt-6 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="buildTrack(noise)">
             Apply <br> Noise
           </button>
+          <button id="buttonDenoise" class="mt-6 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="denoiseAudio()">
+            Denoise <br> Audio <br>
+          </button>
+
 
         </div>
         <audioplayer download="true" secondplayer="true"></audioplayer>
