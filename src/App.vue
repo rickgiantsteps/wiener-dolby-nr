@@ -127,7 +127,7 @@
           <!--<button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
           <button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button>
           <button id="buttonNoise" class="h-fit mt-8 shadow-2xl shadow-[#6da4ba] font-bold py-2 px-4 rounded-full" @click="buildTrack(noise)">Apply Noise</button>-->
-          <button id="buttonNoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="freq_processing(songframes)">
+          <button id="buttonNoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="sendNoiseData">
             Apply <br> Dolby <br> NR
           </button>
           <button id="buttonNoise" class="mt-8 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="buildTrack(noise)">
@@ -307,6 +307,27 @@ export default {
         alert('Please select an audio file');
       }
     },
+
+    sendNoiseData() {
+
+      const formData = new FormData();
+      formData.append("volume", this.noise.volume);
+      formData.append("filterfreq", this.filter.frequency);
+
+      fetch('http://localhost:5000/api/noisedata', {
+        method: 'POST',
+        body: formData,
+      })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Upload successful', data);
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+    },
+
     handleFileUpload(file) {
       const formData = new FormData();
       formData.append('audio', file);
@@ -382,7 +403,7 @@ export default {
         console.error('No file uploaded');
       }
     },
-
+/*
     async freq_processing(track) {
 
       let emphfilt = []
@@ -491,7 +512,7 @@ export default {
       let blob = new Blob(mp3Data, {type: 'audio/mp3'});
       let url = window.URL.createObjectURL(blob);
       console.log('MP3 URl: ', url);
-       */
+
 
 
       const myArrayBuffer = audioContext.createBuffer(1, this.out.length, 22050);
@@ -562,7 +583,7 @@ export default {
 
       return filtered_song
     },
-
+*/
     createNoise(track) {
 
       const bufferSize = 2 * audioContext.sampleRate;

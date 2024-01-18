@@ -58,6 +58,16 @@ def upload_file():
         print(f"Exception: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
         
+@app.route('/api/noisedata', methods=['POST'])
+def receive_data():
+
+    noisevolume = request.form.get('volume')
+    noisefiltFreq = request.form.get('filterfreq')
+    print(noisevolume + noisefiltFreq)
+
+    response_data = {'message': 'Data received successfully'}
+    return jsonify(response_data)
+
 def process_audio(input_filename):
     # Specify the output filename for the processed audio
     output_filename = os.path.join(PROCESSED_FOLDER, 'processed_'+os.path.basename(input_filename))
@@ -198,4 +208,6 @@ def denoise_audio(input_filename, input_filename_clean, input_filename_noise):
     return output_filename
 
 if __name__ == '__main__':
+    noisevolume = 0.05
+    noisefiltFreq = 2000
     app.run(port=5000)
