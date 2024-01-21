@@ -614,6 +614,7 @@ export default {
     },
 
     buildTrack(track) {
+      this.appliedNoise = true
       if (!this.noise.created) {
         track.audioSource = audioContext.createBufferSource();
         track.gainNode = audioContext.createGain();
