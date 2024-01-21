@@ -105,18 +105,17 @@
       </div>
 
       <div class="place-items-center grid grid-cols-3 gap-x-0">
-        <audioplayer :selected="selected" @upload="handleFileUpload" @update="selectUpdate" @timer="playerstate" @play="this.playNoise(noise)" @pause="this.stopNoise(noise)"></audioplayer>
+        <audioplayer :selected="selected" @upload="handleFileUpload" @update="selectUpdate" @timer="playerstate" @play="this.playNoise(noise)" @pause="this.stopNoise()"></audioplayer>
         <div class="mt-8 button-col">
-          <!--<button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
-          <button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button>
-          <button id="buttonNoise" class="h-fit mt-8 shadow-2xl shadow-[#6da4ba] font-bold py-2 px-4 rounded-full" @click="buildTrack(noise)">Apply Noise</button>-->
           <button id="buttonNoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="applyDolbyNR">
             Apply <br> Dolby <br> NR
           </button>
-          <button id="buttonNoise" class="mt-8 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="buildTrack(noise)">
+          <button id="buttonNoise" v-if="!this.appliedNoise" class="mt-8 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="buildTrack(noise)">
             Apply <br> Noise
           </button>
-
+          <button id="buttonNoise" v-else class="mt-8 circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="removeNoise(noise)">
+            Remove <br> Noise
+          </button>
         </div>
         <audioplayer download="true" secondplayer="true"></audioplayer>
       </div>
@@ -127,8 +126,8 @@
 
           <label class="text-2xl font-bold flex justify-center text-[#6da4ba] dark:text-white mb-2">NOISE GENERATOR</label>
           <section class="synth-type">
-            <button class="ml-3 w-5/6 mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="playNoise(noise)">Play noise</button>
-            <button class="ml-3 w-5/6 mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="stopNoise(noise)">Stop</button>
+            <button class="ml-3 w-5/6 mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="playNoise(noise, true)">Play noise</button>
+            <button class="ml-3 w-5/6 mb-3 justify-center text-white font-bold py-2 px-4 rounded-full bg-[#6da4ba] shadow-sm shadow-[#6da4ba] dark:shadow-[#6da4ba] hover:bg-[#3e6f83]" @click="stopNoise(true)">Stop</button>
             <div class="synth-selections shadow shadow-[#6da4ba] dark:shadow-white">
               <label class="text-base font-semibold text-[#6da4ba] dark:text-white ">White Noise</label>
               <div class="noise-slider-container dark:text-white">
@@ -269,18 +268,7 @@ export default {
   methods: {
 
     //////////////////////////////// FLASK //////////////////////////////////////////////
-    uploadAudio() {
-      const fileInput = this.$refs.audioInput;
-      const file = fileInput.files[0];
-
-      if (file) {
-        this.handleFileUpload(file);
-      } else {
-        alert('Please select an audio file');
-      }
-    },
-
-    applyDolbyNR(){
+    applyDolbyNR() {
       this.sendNoiseData();
       this.denoiseAudio();
     },
@@ -290,6 +278,7 @@ export default {
       const formData = new FormData();
       formData.append("volume", this.noise.volume);
       formData.append("filterfreq", this.filter.frequency);
+      formData.append("applied", this.appliedNoise);
 
       fetch('http://localhost:5000/api/noisedata', {
         method: 'POST',
@@ -394,19 +383,22 @@ export default {
       track.audioSource.buffer = noiseBuffer;
     },
 
-    stopNoise() {
-      if (!this.songplaying) {
+    stopNoise(noiseBox=false) {
+      if ((this.appliedNoise&&this.songplaying&&!noiseBox)||(noiseBox&&(!this.appliedNoise||!this.songplaying))||(!this.songplaying&&!noiseBox)) {
         noiseanalyser.disconnect()
         this.noise.playing = false
       }
-
-      //test
-      this.noisedata = this.getnoisedata()
-      console.log("noise:", this.noisedata)
     },
 
-    buildTrack(track) {
-      this.appliedNoise = true
+    removeNoise() {
+      this.stopNoise(false)
+      this.appliedNoise = false
+    },
+
+    buildTrack(track, noiseBox=false) {
+      if(!noiseBox) {
+        this.appliedNoise = true
+      }
       if (!this.noise.created) {
         track.audioSource = audioContext.createBufferSource();
         track.gainNode = audioContext.createGain();
@@ -449,9 +441,9 @@ export default {
       return dataArray;
     },
 
-    playNoise(track) {
+    playNoise(track, noiseBox=false) {
       if (!this.noise.created) {
-        this.buildTrack(track)
+        this.buildTrack(track, noiseBox)
       }
 
       this.noise.playing = true
@@ -459,7 +451,6 @@ export default {
 
       //test
       this.noisedata = this.getnoisedata()
-      console.log("noise:", this.noisedata)
     },
 
     selectUpdate (newData) {
@@ -468,7 +459,6 @@ export default {
     },
 
     playerstate(newVal) {
-      console.log(newVal)
       this.songplaying=newVal
     }
   }
