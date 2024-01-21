@@ -5,8 +5,6 @@ import "./assets/audioplayer.scss"
 <script>
 import { defineComponent } from 'vue'
 import * as mmb from 'music-metadata-browser';
-import applywin from 'window-function/apply'
-import Hann from 'window-function/hann'
 
 export default defineComponent({
   name: 'audioplayer',
@@ -24,12 +22,6 @@ export default defineComponent({
       },
       deep: true
     },
-    songframes: {
-      handler: function (newVal) {
-        this.$emit('frame', newVal);
-      },
-      deep: true
-    },
     isTimerPlaying: {
       handler: function (newVal) {
         this.$emit('timer', newVal);
@@ -44,7 +36,6 @@ export default defineComponent({
 
   data() {
     return {
-      songframes: null,
       newname: "Unknown title",
       newartist: "Unknown artist",
       secondtrack: {
@@ -92,43 +83,11 @@ export default defineComponent({
   },
 
   methods: {
-  /*  async divideFrames(file) {
-      const audioContext = new (window.AudioContext)();
-      const fileReader = new FileReader();
-
-      // Read the uploaded file as an ArrayBuffer
-      const arrayBuffer = await new Promise((resolve, reject) => {
-        fileReader.onload = () => resolve(fileReader.result);
-        fileReader.onerror = reject;
-        fileReader.readAsArrayBuffer(file);
-      });
-      // Decode the audio data from the ArrayBuffer
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-      // Calculate the duration of each frame (e.g., 1 second)
-      //const frameDuration = 1;
-      //const frameSize = Math.ceil(audioContext.sampleRate * frameDuration);
-
-      // Divide the audio buffer into frames
-      const frames = [];
-      let length = audioBuffer.length
-      let window_length = 1024
-      const hop = window_length/4
-      let window_number = Math.floor((length-window_length)/hop)+1
-      for (let i = 0; i < window_number; i++) {
-        const frameData = applywin(audioBuffer.getChannelData(0).subarray(i*hop, i*hop + window_length), Hann);
-        frames.push(frameData);
-      }
-      return frames;
-    },*/
 
      async song_onFileChanged() {
          if (!this.secondplayer) {
            this.$emit("update", "5");
            this.uploadedFile = this.$refs.newsong.files[0];
-
-           // Divide the uploaded audio file into frames
-           //this.songframes = await this.divideFrames(this.uploadedFile);
 
            await mmb.parseBlob(this.uploadedFile).then(metadata => {
              this.newname = metadata.common.title;
@@ -159,11 +118,6 @@ export default defineComponent({
         this.currentTrack = this.tracks[this.selected];
         this.generateTime()
         this.resetPlayer()
-
-        const response = await fetch(this.currentTrack.source);
-        const blob = await response.blob();
-        const file = new File([blob], 'song.mp3', {type: 'audio/mpeg'});
-        //this.songframes = await this.divideFrames(file)
       }
     },
 
@@ -260,11 +214,6 @@ export default defineComponent({
         vm.audio.currentTime = 0
         vm.isTimerPlaying = false;
       };
-
-      const response = await fetch(this.audio.src);
-      const blob = await response.blob();
-      const file = new File([blob], 'song.mp3', {type: 'audio/mpeg'});
-      //this.songframes = await this.divideFrames(file)
     }
   }
 })

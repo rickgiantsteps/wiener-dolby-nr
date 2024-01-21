@@ -122,7 +122,7 @@
       </div>
 
       <div class="place-items-center grid grid-cols-3 gap-x-0">
-        <audioplayer :selected="selected" @update="selectUpdate" @frame="songframed" @timer="playerstate" @play="this.playNoise(noise)" @pause="this.stopNoise(noise)"></audioplayer>
+        <audioplayer :selected="selected" @update="selectUpdate" @timer="playerstate" @play="this.playNoise(noise)" @pause="this.stopNoise(noise)"></audioplayer>
         <div class="mt-8 button-col">
           <!--<button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
           <button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button>
@@ -241,18 +241,7 @@ function darkModeSwitch() {
 </script>
 
 <script>
-import * as fourier from 'fft-js'
 import audioplayer from "@/audioplayer.vue";
-//import axios from 'axios';
-//import * as lamejs from "lamejs"
-//import MPEGMode from 'lamejs/src/js/MPEGMode';
-//import Lame from 'lamejs/src/js/Lame';
-//import BitStream from 'lamejs/src/js/BitStream';
-//window.MPEGMode = MPEGMode;
-//.Lame = Lame;
-//window.BitStream = BitStream;
-
-//import encodeWAV from "audiobuffer-to-wav"
 
 const audioContext = new(window.AudioContext);
 let windowsize = 1024
@@ -408,187 +397,7 @@ export default {
         console.error('No file uploaded');
       }
     },
-/*
-    async freq_processing(track) {
 
-      let emphfilt = []
-      let deemphfilt = []
-      let temporarysonglength = 100
-
-      //takes too long, maybe add number to track progress
-      this.noisedata = this.getnoisedata()
-      this.noisefourier = await fourier.fft(this.noisedata)
-      this.stopNoise(this.noise)
-
-      //get noisy song (clean song frames + noisedata)
-      let noise_appoggio = this.noisedata
-      let noisytrackframes = []
-      for (let i = 0; i < track.length; i++) {
-        noisytrackframes[i] = track[i].map(function (num, idx) {
-          return num + noise_appoggio[idx];
-        })
-      }
-
-      //frequency analysis of noisy song
-      this.fourierframes = []
-
-      for (let i=0; i<temporarysonglength; i++) {
-        let track_array = []
-        let track_appoggio = noisytrackframes[i]
-        for(let ii = 0; ii < noisytrackframes[i].length; ii++){
-          track_array[ii] = track_appoggio[ii]
-        }
-        this.fourierframes.push(fourier.fft(track_array.concat(Array(zeropad_factor-noisytrackframes[i].length).fill(0))))
-      }
-
-
-      this.noisepower = this.getpower(this.noisefourier,1)
-      this.songpower = this.getpower(this.fourierframes,temporarysonglength)
-
-      //filters, made 2d for correct product with signal fft
-      for (let i = 0; i < this.songpower.length; i++) {
-        emphfilt.push([Math.sqrt(this.noisepower[i] / this.songpower[i]),1]);
-        deemphfilt.push([Math.sqrt((2*this.songpower[i]) / this.noisepower[i]),1]);
-      }
-
-      //filtering
-      let filtered_song = []
-      filtered_song = this.dolbyfiltering(this.fourierframes, emphfilt, deemphfilt)
-
-      this.timeframes = []
-
-      for (let i=0; i<filtered_song.length; i++) {
-        this.timeframes.push(fourier.ifft(filtered_song[i]))
-        //real values
-        for(let ii = 0; ii < this.timeframes[i].length; ii++){
-          this.timeframes[i][ii].pop()
-          //turns length one float array into float value
-          this.timeframes[i][ii] = parseFloat(this.timeframes[i][ii])
-        }
-      }
-
-      console.log(this.timeframes)
-
-      //     here add to out buffer, keeping track of the zero padding
-      //     out_sd[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(his.timeframes[i])
-      this.out = this.timeframes[0]
-      console.log(this.out)
-      let hop = windowsize/4
-      for(let i = 1; i < filtered_song.length; i++) {
-        let out_appoggio = this.out.splice(i*hop)
-        let slice_one = this.timeframes[i].slice(0, zeropad_factor-hop)
-        let slice_two = this.timeframes[i].slice(zeropad_factor-hop)
-        let overlap = out_appoggio.map(function (num, idx) {
-          return num + slice_one[idx];
-        })
-        this.out = this.out.concat(overlap).concat(slice_two)
-        console.log("frame "+i)
-        console.log(this.out)
-      }
-      console.log(this.out)
-
-      //file write
-      /*
-      let channels = 1; //1 for mono or 2 for stereo
-      let sampleRate = 44100; //44.1khz (normal mp3 sample rate)
-      let kbps = 128; //encode 128kbps mp3
-      let mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, kbps);
-      let sampleBlockSize = 1152;
-
-      let mp3Data = [];
-      for (let i = 0; i < this.out.length; i += sampleBlockSize) {
-        let sampleChunk = this.out.slice(i, i + sampleBlockSize);
-        console.log(sampleChunk)
-        let mp3buf = mp3encoder.encodeBuffer(sampleChunk);
-        console.log(mp3buf)
-        if (mp3buf.length > 0) {
-          mp3Data.push(mp3buf);
-        }
-      }
-
-      let mp3buf = mp3encoder.flush();   //finish writing mp3
-      console.log(mp3buf)
-
-      if (mp3buf.length > 0) {
-        mp3Data.push(mp3buf);
-      }
-
-      console.log(mp3Data)
-      let blob = new Blob(mp3Data, {type: 'audio/mp3'});
-      let url = window.URL.createObjectURL(blob);
-      console.log('MP3 URl: ', url);
-
-
-
-      const myArrayBuffer = audioContext.createBuffer(1, this.out.length, 22050);
-      const nowBuffering = myArrayBuffer.getChannelData(0);
-      for (let i = 0; i < myArrayBuffer.length; i++) {
-        nowBuffering[i] = this.out[i]
-      }
-
-      const source = audioContext.createBufferSource();
-      source.buffer = myArrayBuffer;
-      source.connect(audioContext.destination);
-      source.start();
-
-    },
-
-    getpower(freqframes, n) {
-
-      let power = [];
-      let framepower = [];
-      let ipower = []
-      let undividedpow = new Array(4096).fill(0)
-
-      if (n===1) {
-        for (let i=0; i<freqframes.length; i++) {
-          power[i] = Math.pow(freqframes[i][0],2)+Math.pow(freqframes[i][1],2)
-        }
-      } else {
-
-        for (let i=0; i<n; i++) {
-          framepower = []
-          for(let ii = 0; ii < freqframes[i].length; ii++){
-            framepower[ii] = Math.pow(freqframes[i][ii][0],2)+Math.pow(freqframes[i][ii][1],2)
-          }
-          ipower[i] = framepower
-        }
-
-        for (let i=0; i<ipower.length; i++) {
-          undividedpow = undividedpow.map(function (num, idx) {
-            return num + ipower[i][idx];
-          });
-        }
-
-        for (let i = 0; i < undividedpow.length; i++) {
-          power[i] = undividedpow[i] / n;
-        }
-      }
-
-      return power
-    },
-
-    dolbyfiltering(freqdata, emphasis, deemphasis) {
-
-      let filtered_song = []
-      let filtered_song_frame = []
-      let res1, res2
-
-      console.log("dolby!")
-
-      for (let i=0; i<freqdata.length; i++) {
-        filtered_song_frame = []
-        for (let k=0; k<freqdata[i].length; k++) {
-          res1 = freqdata[i][k][0] * emphasis[k][0] * 0.5 * deemphasis[k][0]
-          res2 = freqdata[i][k][1] * emphasis[k][1] * 0.5 * deemphasis[k][1]
-          filtered_song_frame.push([res1, res2])
-        }
-        filtered_song.push(filtered_song_frame)
-      }
-
-      return filtered_song
-    },
-*/
     createNoise(track) {
 
       const bufferSize = 2 * audioContext.sampleRate;
@@ -675,10 +484,6 @@ export default {
       this.appliedNoise = false
     },
 
-   /* songframed (newFrames) {
-      this.songframes = newFrames
-      this.appliedNoise = false
-    }*/
     playerstate(newVal) {
       console.log(newVal)
       this.songplaying=newVal
