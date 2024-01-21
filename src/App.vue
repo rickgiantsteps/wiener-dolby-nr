@@ -92,23 +92,6 @@
       </div>
     </div>
 
-    <!-- UPLOAD FORM FLASK -->
-    <div>
-      <form @submit.prevent="uploadAudio" enctype="multipart/form-data">
-        <input type="file" ref="audioInput" accept="audio/*" />
-        <button type="submit">Upload Audio</button>
-      </form>
-    </div>
-    <!--  END UPLOAD FORM FLASK -->
-
-    <!-- DENOISE FORM FLASK
-    <div>
-      <button id="buttonDenoise" class="circle-button bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold" @click="denoiseAudio()">
-        Denoise <br> Audio <br>
-      </button>
-    </div>
-      END DENOISE FORM FLASK -->
-
     <div class="px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:pt-5">
       <div class="h-10 grid grid-rows-2 place-items-center mt-3 mb-11">
         <label for="songs" class="justify-center font-bold block mb-7 text-sm text-[#6da4ba] dark:text-white">Select a demo song</label>
@@ -122,7 +105,7 @@
       </div>
 
       <div class="place-items-center grid grid-cols-3 gap-x-0">
-        <audioplayer :selected="selected" @update="selectUpdate" @timer="playerstate" @play="this.playNoise(noise)" @pause="this.stopNoise(noise)"></audioplayer>
+        <audioplayer :selected="selected" @upload="handleFileUpload" @update="selectUpdate" @timer="playerstate" @play="this.playNoise(noise)" @pause="this.stopNoise(noise)"></audioplayer>
         <div class="mt-8 button-col">
           <!--<button class="h-fit bg-[#6da4ba] dark:bg-slate-700 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" @click="playNoise(noise)">Apply DOLBY NR</button>
           <button id="buttonNoise" class="h-fit bg-[#6da4ba] dark:bg-slate-700 mt-2 shadow-2xl shadow-[#6da4ba] hover:bg-slate-700 dark:hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-full" onclick="changeProperties()">Apply Noise</button>

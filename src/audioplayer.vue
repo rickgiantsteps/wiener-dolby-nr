@@ -16,6 +16,11 @@ export default defineComponent({
   },
 
   watch: {
+    uploadedFile: {
+      handler: function (newVal) {
+        this.$emit('upload', newVal);
+      }
+    },
     selected: {
       handler: function () {
         this.songSelect()
