@@ -58,6 +58,16 @@ def upload_file():
         print(f"Exception: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
         
+@app.route('/api/noisedata', methods=['POST'])
+def receive_data():
+
+    noisevolume = request.form.get('volume')
+    noisefiltFreq = request.form.get('filterfreq')
+    process_audio(filename)
+
+    response_data = {'message': 'Data received successfully'}
+    return jsonify(response_data)
+
 def process_audio(input_filename):
     # Specify the output filename for the processed audio
     output_filename = os.path.join(PROCESSED_FOLDER, 'processed_'+os.path.basename(input_filename))
@@ -70,10 +80,13 @@ def process_audio(input_filename):
     # Check if the audio data is stereo
     if len(data.shape) == 2:
         # Generate stereo noise with the same number of channels and samples
-        noise = np.random.normal(0, 0.1, data.shape)
+        noise = noisevolume*np.random.normal(0, 0.1, data.shape)
     else:
         # Generate mono noise for mono audio data
-        noise = np.random.normal(0, 0.1, len(data))
+        noise = noisevolume*np.random.normal(0, 0.1, len(data))
+
+    b, a = sp.signal.butter(5, noisefiltFreq/(samplerate/2), btype='high', analog=False)
+    noise = sp.signal.lfilter(b, a, noise)
 
     # Add the noise to the audio data
     processed_data = data + noise
@@ -192,4 +205,7 @@ def denoise_audio(input_filename, input_filename_clean, input_filename_noise):
     return output_filename
 
 if __name__ == '__main__':
+    noisevolume = 0.05
+    noisefiltFreq = 2000
+    filename = ""
     app.run(port=5000)
