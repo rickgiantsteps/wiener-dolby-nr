@@ -58,16 +58,6 @@ def upload_file():
         print(f"Exception: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
         
-@app.route('/api/noisedata', methods=['POST'])
-def receive_data():
-
-    noisevolume = request.form.get('volume')
-    noisefiltFreq = request.form.get('filterfreq')
-    print(noisevolume + noisefiltFreq)
-
-    response_data = {'message': 'Data received successfully'}
-    return jsonify(response_data)
-
 def process_audio(input_filename):
     # Specify the output filename for the processed audio
     output_filename = os.path.join(PROCESSED_FOLDER, 'processed_'+os.path.basename(input_filename))
@@ -114,10 +104,7 @@ def denoise():
         filename_noise = os.path.join(NOISE_FOLDER, 'noise_'+filename)
 
         denoised_filename = denoise_audio(filename_path, filename_clean, filename_noise)
-        
-        #If you want to return a JSON
-        #return jsonify({'message': 'Denoising successful', 'denoised_filename': os.path.basename(denoised_filename)})
-        
+         
         #If you want to return the wav file
         return send_from_directory(DENOISED_FOLDER, os.path.basename(denoised_filename)) 
     
@@ -137,12 +124,11 @@ def pdf_calculator(samplerate, clean_song, noise):
 def denoise_audio(input_filename, input_filename_clean, input_filename_noise):
 
     # Specify the output filename for the processed audio
-    output_filename = os.path.join(DENOISED_FOLDER, os.path.basename("denoised_"+input_filename))
-
-    # Load the audio file
-    samplerate, data = sp.io.wavfile.read(input_filename)
-    samplerate_clean, data_clean = sp.io.wavfile.read(input_filename_clean)
-    samplerate_noise, data_noise = sp.io.wavfile.read(input_filename_noise)
+    output_filename = os.path.join(DENOISED_FOLDER, "denoised_" + os.path.basename(input_filename))
+ 
+    data, samplerate = sf.read(input_filename)
+    data_clean, samplerate_clean = sf.read(input_filename_clean)
+    data_noise, samplerate_noise = sf.read(input_filename_noise)
 
     
     if (np.shape(data)[1]==2):
@@ -199,15 +185,11 @@ def denoise_audio(input_filename, input_filename_clean, input_filename_noise):
         # Deemphasis filter
         noisy_song_deemphasis = noisy_song_emphasis * np.sqrt((2*clean_song_PSD)/noise_PSD)
 
-        out_dolby[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(noisy_song_deemphasis).real
-        
-    #sp.io.wavfile.write(output_filename, samplerate, out_dolby.astype(np.int16))
-        
+        out_dolby[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(noisy_song_deemphasis).real     
+            
     sf.write(output_filename, out_dolby, samplerate)
-                  
+                      
     return output_filename
 
 if __name__ == '__main__':
-    noisevolume = 0.05
-    noisefiltFreq = 2000
     app.run(port=5000)
