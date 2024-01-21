@@ -26,3 +26,7 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+/src/audio/denoised/*
+/src/audio/noise/*
+/src/audio/processed/*
+/src/audio/uploads/*
