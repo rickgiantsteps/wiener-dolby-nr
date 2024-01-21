@@ -123,7 +123,15 @@ export default defineComponent({
         this.currentTrack = this.tracks[this.selected];
         this.generateTime()
         this.resetPlayer()
+
+        this.uploadedFile = await this.createFileObjectFromURL(this.currentTrack.source, this.currentTrack.artist+" - "+this.currentTrack.name+".mp3", "audio/*");
       }
+    },
+
+    createFileObjectFromURL(url, fileName, mimeType) {
+        return fetch(url)
+          .then(response => response.blob())
+          .then(blob => new File([blob], fileName, { type: mimeType }));
     },
 
     play() {
@@ -219,6 +227,8 @@ export default defineComponent({
         vm.audio.currentTime = 0
         vm.isTimerPlaying = false;
       };
+
+      this.uploadedFile = await this.createFileObjectFromURL(this.currentTrack.source, this.currentTrack.artist+" - "+this.currentTrack.name+".mp3", "audio/*");
     }
   }
 })
