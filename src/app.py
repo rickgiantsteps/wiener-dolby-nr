@@ -36,6 +36,7 @@ def home():
 
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
+    global filename
     try:
         
         if 'audio' not in request.files:
@@ -61,18 +62,34 @@ def upload_file():
 @app.route('/api/noisedata', methods=['POST'])
 def receive_data():
 
-    noisevolume = request.form.get('volume')
-    noisefiltFreq = request.form.get('filterfreq')
-    process_audio(filename)
+    global applied
+    global noisevolume
+    global noisefiltFreq
+
+    applied = request.form.get('applied')=="true"
+
+    if (applied):
+        noisevolume = float(request.form.get('volume'))
+        noisefiltFreq = float(request.form.get('filterfreq'))
+        process_audio(filename)
+    else:
+        noisevolume = 0
+        noisefiltFreq = 1
+        process_audio(filename)
+
+    denoise()
 
     response_data = {'message': 'Data received successfully'}
     return jsonify(response_data)
 
 def process_audio(input_filename):
+
+    global noisevolume
+    global noisefiltFreq
     # Specify the output filename for the processed audio
     output_filename = os.path.join(PROCESSED_FOLDER, 'processed_'+os.path.basename(input_filename))
     output_filename_noise = os.path.join(NOISE_FOLDER, 'noise_'+os.path.basename(input_filename))
-    
+
     print(input_filename)
     # Load the audio file
     data, samplerate = sf.read(input_filename)
@@ -97,24 +114,21 @@ def process_audio(input_filename):
 
     return output_filename, output_filename_noise
 
-@app.route('/api/denoise',  methods=['POST'])
+#@app.route('/api/denoise',  methods=['POST'])
 def denoise():
+
     try:
         
-        if 'filename' not in request.form:
-            return jsonify({'error': 'No filename provided'}), 400
-        
-        # Get the filename from the request form
-        filename = request.form['filename']
-        
-        filename_path = os.path.join(PROCESSED_FOLDER, 'processed_'+filename)
-        
+        global filename
+
+        filename_path = os.path.join(PROCESSED_FOLDER, 'processed_'+filename.rsplit("\\", 1)[-1])
+
         if not os.path.exists(filename_path):
             return jsonify({'error': 'File not found'}), 404
 
-        filename_clean = os.path.join(UPLOAD_FOLDER, filename)
+        filename_clean = os.path.join(UPLOAD_FOLDER, filename.rsplit("\\", 1)[-1])
         
-        filename_noise = os.path.join(NOISE_FOLDER, 'noise_'+filename)
+        filename_noise = os.path.join(NOISE_FOLDER, 'noise_'+filename.rsplit("\\", 1)[-1])
 
         denoised_filename = denoise_audio(filename_path, filename_clean, filename_noise)
          
@@ -143,69 +157,75 @@ def denoise_audio(input_filename, input_filename_clean, input_filename_noise):
     data_clean, samplerate_clean = sf.read(input_filename_clean)
     data_noise, samplerate_noise = sf.read(input_filename_noise)
 
+    if (applied):
     
-    if (np.shape(data)[1]==2):
-        data = np.average(data, axis=1)
-    
-    if (np.shape(data_clean)[1]==2):
-        data_clean = np.average(data_clean, axis=1)
-    
-    if (np.shape(data_noise)[1]==2):
-        data_noise = np.average(data_noise, axis=1)
+        if (np.shape(data)[1]==2):
+            data = np.average(data, axis=1)
         
-    
-    data_clean = data_clean * 0.5
-    data_noise = data_noise * 0.5
-    data = data * 0.5
-
-    # Set the length of the output as the shorter of the two inputs
-    length = min(len(data_clean),len(data_noise))      
-    
-    # Set windowing parameters
-    window_length = 1024
-    hop = window_length / 4
-    window = np.hanning(window_length)
-    
-    # Number of windows that will be generated
-    window_number = np.floor((length-window_length)/hop) + 1
-    
-    # Inizialize output
-    zeropad_factor = window_length*4 #power of 2 for better performing fft
-    song_emph = np.zeros(length+zeropad_factor)
-    out_dolby = np.zeros(length+zeropad_factor)
+        if (np.shape(data_clean)[1]==2):
+            data_clean = np.average(data_clean, axis=1)
         
-    #PDF calculation
-    clean_song_PSD, noise_PSD = pdf_calculator(samplerate_clean, data_clean, data_noise)
+        if (np.shape(data_noise)[1]==2):
+            data_noise = np.average(data_noise, axis=1)
             
-    print("Applying Wiener DolbyNR . . . ")
-    for k in range(0, int(window_number)):
         
-        # Extract frames with windows
-        song_frame = window*data_clean[int(k*hop): int(k*hop + window_length)]
-        noise_frame = window*data_noise[int(k*hop): int(k*hop + window_length)]
+        data_clean = data_clean * 0.5
+        data_noise = data_noise * 0.5
+        data = data * 0.5
 
-        # FFT
-        song_frame_fft = np.fft.fft(song_frame, n=zeropad_factor)
-        noise_frame_fft = np.fft.fft(noise_frame, n=zeropad_factor)
+        # Set the length of the output as the shorter of the two inputs
+        length = min(len(data_clean),len(data_noise))      
         
-        # Emphasis filter
-        song_emphasis = song_frame_fft * np.sqrt(noise_PSD/clean_song_PSD)
+        # Set windowing parameters
+        window_length = 1024
+        hop = window_length / 4
+        window = np.hanning(window_length)
         
-        noisy_song_emphasis = song_emphasis + noise_frame_fft
-
-        noisy_song_emphasis *= 0.5
-
-        # Deemphasis filter
-        noisy_song_deemphasis = noisy_song_emphasis * np.sqrt((2*clean_song_PSD)/noise_PSD)
-
-        out_dolby[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(noisy_song_deemphasis).real     
+        # Number of windows that will be generated
+        window_number = np.floor((length-window_length)/hop) + 1
+        
+        # Inizialize output
+        zeropad_factor = window_length*4 #power of 2 for better performing fft
+        song_emph = np.zeros(length+zeropad_factor)
+        out_dolby = np.zeros(length+zeropad_factor)
             
-    sf.write(output_filename, out_dolby, samplerate)
+        #PDF calculation
+        clean_song_PSD, noise_PSD = pdf_calculator(samplerate_clean, data_clean, data_noise)
+                
+        print("Applying Wiener DolbyNR . . . ")
+        for k in range(0, int(window_number)):
+            
+            # Extract frames with windows
+            song_frame = window*data_clean[int(k*hop): int(k*hop + window_length)]
+            noise_frame = window*data_noise[int(k*hop): int(k*hop + window_length)]
+
+            # FFT
+            song_frame_fft = np.fft.fft(song_frame, n=zeropad_factor)
+            noise_frame_fft = np.fft.fft(noise_frame, n=zeropad_factor)
+            
+            # Emphasis filter
+            song_emphasis = song_frame_fft * np.sqrt(noise_PSD/clean_song_PSD)
+            
+            noisy_song_emphasis = song_emphasis + noise_frame_fft
+
+            noisy_song_emphasis *= 0.5
+
+            # Deemphasis filter
+            noisy_song_deemphasis = noisy_song_emphasis * np.sqrt((2*clean_song_PSD)/noise_PSD)
+
+            out_dolby[int((k*hop)):int((k*hop + (zeropad_factor)))] += np.fft.ifft(noisy_song_deemphasis).real     
+            
+        sf.write(output_filename, out_dolby, samplerate)
+
+    else:
+
+        sf.write(output_filename, data, samplerate)
                       
     return output_filename
 
 if __name__ == '__main__':
-    noisevolume = 0.05
-    noisefiltFreq = 2000
+    applied = False
+    noisevolume = 0
+    noisefiltFreq = 1
     filename = ""
     app.run(port=5000)

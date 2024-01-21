@@ -268,9 +268,9 @@ export default {
   methods: {
 
     //////////////////////////////// FLASK //////////////////////////////////////////////
-    applyDolbyNR() {
+     applyDolbyNR() {
       this.sendNoiseData();
-      this.denoiseAudio();
+      //this.denoiseAudio();
     },
 
     sendNoiseData() {
@@ -342,7 +342,7 @@ export default {
         this.noise.playing = false;
       }
     },*/
-
+    /*
     denoiseAudio() {
 
       if (this.downloadProcessedFile) {
@@ -368,7 +368,7 @@ export default {
       } else {
         console.error('No file uploaded');
       }
-    },
+    },*/
 
     createNoise(track) {
 
