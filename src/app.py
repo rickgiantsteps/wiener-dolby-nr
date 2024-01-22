@@ -79,7 +79,7 @@ def receive_data():
 
     denoise()
 
-    response_data = {'message': 'Data received successfully'}
+    response_data = {'message': 'Processing complete'}
     return jsonify(response_data)
 
 def process_audio(input_filename):

@@ -178,3 +178,18 @@
 .two-col .col2 {
     float: right;
 }
+
+@keyframes shimmer {
+    0% {
+        background-position: -200%;
+    }
+    100% {
+        background-position: 200%;
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 1.5s infinite linear;
+    background: linear-gradient(90deg, transparent, rgba(100, 164, 186, 0.5), transparent);
+    background-size: 200% 100%;
+}

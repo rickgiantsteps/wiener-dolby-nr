@@ -104,6 +104,10 @@
         </select>
       </div>
 
+      <div class="grid place-items-center mt-5">
+        <p v-if="message" class="justify-center font-bold block mb-7 text-lg text-[#6da4ba] dark:text-white animate-shimmer">{{ message }}</p>
+      </div>
+
       <div class="place-items-center grid grid-cols-3 gap-x-0">
         <audioplayer :selected="selected" @upload="handleFileUpload" @update="selectUpdate" @timer="playerstate" @play="this.playNoise(noise)" @pause="this.stopNoise()"></audioplayer>
         <div class="mt-8 button-col">
@@ -235,6 +239,7 @@ export default {
 
   data() {
     return {
+      message: "",
       processedFilename: null,
       biquadFilter: null,
       songframes: null,
@@ -267,13 +272,20 @@ export default {
 
   methods: {
 
+    hideTextAfterDelay() {
+      setTimeout(() => {
+        this.message = "";
+      }, 5000); // Adjust the time (in milliseconds) as needed
+    },
+
     //////////////////////////////// FLASK //////////////////////////////////////////////
      applyDolbyNR() {
       this.sendNoiseData();
-      //this.denoiseAudio();
     },
 
     sendNoiseData() {
+
+      this.message = "Processing..."
 
       const formData = new FormData();
       formData.append("volume", this.noise.volume);
@@ -286,15 +298,22 @@ export default {
       })
           .then(response => response.json())
           .then(data => {
+            this.message = data.message+"!"
+            this.hideTextAfterDelay()
             console.log('Upload successful', data);
             console.log(data);
           })
           .catch(error => {
+            this.message = error
+            this.hideTextAfterDelay()
             console.error('Error:', error);
           });
     },
 
     handleFileUpload(file) {
+
+      this.message = "Uploading..."
+
       const formData = new FormData();
       formData.append('audio', file);
 
@@ -304,6 +323,8 @@ export default {
       })
           .then(response => response.json())
           .then(data => {
+            this.message = data.message+"!"
+            this.hideTextAfterDelay()
             console.log('Upload successful', data);
             if (data.processed_filename) {
               this.downloadProcessedFile = data.processed_filename;
@@ -316,6 +337,8 @@ export default {
             }
           })
           .catch(error => {
+            this.message = error
+            this.hideTextAfterDelay()
             console.error('Error uploading file', error);
           });
     },
