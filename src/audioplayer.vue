@@ -13,9 +13,16 @@ export default defineComponent({
     selected: String,
     download: false,
     secondplayer: false,
+    downUrl: null,
+    denoisedName: null
   },
 
   watch: {
+    downUrl: {
+      handler: function() {
+        this.getProcessedSong()
+      }
+    },
     uploadedFile: {
       handler: function (newVal) {
         this.$emit('upload', newVal);
@@ -83,7 +90,8 @@ export default defineComponent({
       ],
       currentTrack: null,
       currentTrackIndex: 0,
-      transitionName: null
+      transitionName: null,
+      denoisedFile: null
     };
   },
 
@@ -111,9 +119,29 @@ export default defineComponent({
            this.currentTrack = this.tracks[this.currentTrackIndex];
            this.generateTime();
            this.resetPlayer();
+         } else {
+           this.resetPlayer();
          }
      },
 
+    async getProcessedSong() {
+      if (this.secondplayer) {
+        this.denoisedFile = await this.createFileObjectFromURL(this.downUrl, this.denoisedName, "audio/*");
+        this.tracks.pop();
+        if (this.newname === undefined && this.newartist === undefined) {
+          this.newname = this.denoisedName;
+        }
+        this.tracks.push({
+          name: this.denoisedName,
+          artist: this.denoisedName,
+          source: URL.createObjectURL(this.denoisedFile)
+        });
+        this.currentTrackIndex = this.tracks.length - 1;
+        this.currentTrack = this.tracks[this.currentTrackIndex];
+        this.generateTime();
+        this.resetPlayer();
+      }
+    },
 
     async songSelect(){
       if (!this.secondplayer) {
@@ -209,6 +237,16 @@ export default defineComponent({
         }
       }, 300);
     },
+
+    downloadFile() {
+      const downloadLink = document.createElement('a');
+      downloadLink.href = this.downUrl;
+      downloadLink.download = this.denoisedName;
+
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
   },
 
   async created() {
@@ -237,7 +275,7 @@ export default defineComponent({
 <template>
   <div class="grid grid-rows-2">
     <div v-if="download" class='file file--upload my-12'>
-      <label for='down-file'>
+      <label @click="downloadFile" for='down-file'>
         <!--
         <svg viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>

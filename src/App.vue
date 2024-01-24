@@ -121,7 +121,7 @@
             Remove <br> Noise
           </button>
         </div>
-        <audioplayer download="true" secondplayer="true"></audioplayer>
+        <audioplayer :denoisedName="denoisedName" :downUrl="denoisedFile" download="true" secondplayer="true"></audioplayer>
       </div>
 
       <div class="flex justify-center mt-10">
@@ -250,21 +250,16 @@ export default {
         created: false
       },
       noisedata: Float32Array,
-      fourierframes: [],
-      timeframes: [],
-      noisefourier: Float32Array,
       filter: {
         frequency: 2000,
         gain: 0
       },
-      noisepower: null,
-      songpower: null,
       appliedNoise: false,
       songplaying: false,
       out: [],
-      uploadedFile: null, // Add this data property to store the uploaded file
-      downloadProcessedFile: null,
-      denoisedAudio: null,
+      uploadedFile: null,
+      denoisedFile: null,
+      denoisedName: null
     }
 
   },
@@ -283,6 +278,19 @@ export default {
       this.sendNoiseData();
     },
 
+    getDenoised() {
+      fetch('/get_denoised')
+          .then(response => response.blob())
+          .then(audioBlob => {
+            this.denoisedFile = URL.createObjectURL(audioBlob);
+          })
+          .catch(error => {
+            this.message = "Error in retrieving the processed file: " + error
+            this.hideTextAfterDelay()
+            console.error('Error in retrieving the processed file:', error);
+          });
+    },
+    
     sendNoiseData() {
 
       this.message = "Processing..."
@@ -298,10 +306,12 @@ export default {
       })
           .then(response => response.json())
           .then(data => {
+            this.denoisedName = data.filename
             this.message = data.message+"!"
             this.hideTextAfterDelay()
             console.log('Upload successful', data);
             console.log(data);
+            this.getDenoised();
           })
           .catch(error => {
             this.message = error
@@ -326,12 +336,6 @@ export default {
             this.message = data.message+"!"
             this.hideTextAfterDelay()
             console.log('Upload successful', data);
-            if (data.processed_filename) {
-              this.downloadProcessedFile = data.processed_filename;
-            }
-            else {
-              console.error('Processed filename is undefined');
-            }
             if (data.filename) {
               this.uploadedFile = data.filename;
             }
@@ -342,56 +346,6 @@ export default {
             console.error('Error uploading file', error);
           });
     },
-    /*
-    downloadProcessedFile(filename) {
-      // Create a link and trigger the download
-      const link = document.createElement('a');
-      link.href = `http://localhost:5000/api/download/${filename}`;
-      link.download = filename;
-      link.click();
-    },
-    */
-    /*async changeProperties() {
-      let button = document.getElementById("buttonNoise");
-      if (this.noise.playing === false) {
-        button.style.backgroundColor = "#446111"; // Change the background color
-        button.style.color = "#FFF"; // Change the text color
-        button.innerHTML = "Apply Noise"; // Change the button text
-        this.noise.playing = true;
-      }else{
-        button.style.backgroundColor = "#F00"; // Change the background color
-        button.style.color = "#FFF"; // Change the text color
-        button.innerHTML = "Clicked"; // Change the button text
-        this.noise.playing = false;
-      }
-    },*/
-    /*
-    denoiseAudio() {
-
-      if (this.downloadProcessedFile) {
-        console.log('Denoise the uploaded file:', this.downloadProcessedFile);
-        const formData = new FormData();
-        if(this.uploadedFile != null){
-          formData.append('filename', this.uploadedFile); // Song + Noise
-        }
-
-        fetch('http://localhost:5000/api/denoise', {
-          method: 'POST',
-          body: formData,
-        })
-            .then(response => response.json())
-            .then(data => {
-              console.log("Audio denoised correctly!")
-              this.denoisedAudio = data.denoised_filename;
-            })
-            .catch(error => {
-              console.error('Error ', error);
-            });
-
-      } else {
-        console.error('No file uploaded');
-      }
-    },*/
 
     createNoise(track) {
 
@@ -457,13 +411,6 @@ export default {
 
     },
 
-    getnoisedata() {
-      const bufferLength = noiseanalyser.frequencyBinCount;
-      const dataArray = new Float32Array(bufferLength);
-      noiseanalyser.getFloatTimeDomainData(dataArray)
-      return dataArray;
-    },
-
     playNoise(track, noiseBox=false) {
       if (!this.noise.created) {
         this.buildTrack(track, noiseBox)
@@ -471,9 +418,6 @@ export default {
 
       this.noise.playing = true
       noiseanalyser.connect(audioContext.destination)
-
-      //test
-      this.noisedata = this.getnoisedata()
     },
 
     selectUpdate (newData) {

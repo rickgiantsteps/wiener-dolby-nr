@@ -59,6 +59,16 @@ def upload_file():
         print(f"Exception: {str(e)}")
         return jsonify({'error': 'Internal Server Error'}), 500
         
+@app.route('/api/get_denoised', methods=['POST'])
+def receive_song():
+    global denoised_filename
+
+    try:
+        return send_file(denoised_filename, as_attachment=True)
+    except Exception as e:
+        print(f"An error occurred: {e}")   
+        return jsonify({'error': 'Internal Server Error'}), 500  
+
 @app.route('/api/noisedata', methods=['POST'])
 def receive_data():
 
@@ -79,7 +89,7 @@ def receive_data():
 
     denoise()
 
-    response_data = {'message': 'Processing complete'}
+    response_data = {'message': 'Processing complete', 'filename': denoised_filename.rsplit("\\", 1)[-1].replace(os.path.splitext(denoised_filename)[1], " (Denoised Version)"+os.path.splitext(denoised_filename)[1])[19:]}
     return jsonify(response_data)
 
 def process_audio(input_filename):
@@ -120,6 +130,7 @@ def denoise():
     try:
         
         global filename
+        global denoised_filename
 
         filename_path = os.path.join(PROCESSED_FOLDER, 'processed_'+filename.rsplit("\\", 1)[-1])
 
@@ -228,4 +239,5 @@ if __name__ == '__main__':
     noisevolume = 0
     noisefiltFreq = 1
     filename = ""
+    denoised_filename = ""
     app.run(port=5000)
