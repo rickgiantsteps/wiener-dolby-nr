@@ -2,7 +2,7 @@
   <img src="/images/WienerDNR.png" width = 65% height = 65% object-fit = cover>
 <p/>
 
-# Wiener DOLBY-NR
+# Wiener Noise Removal
 
 JS libraries used: 
 + **music-metadata-browser** (https://www.npmjs.com/package/music-metadata-browser),
