@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"npm run dev:vite\" \"npm run dev:python\"",
+    "dev:vite": "vite",
+    "dev:python": "py src\\app.py",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
+    "concurrently": "^8.2.2",
     "sass": "^1.68.0",
     "vite": "^4.3.9"
   }
