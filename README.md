@@ -23,11 +23,16 @@ pip install numpy
 
 ## General Introduction
 
-Wiener-DolbyNR tries to obtain an effect similar to the popular Dolby Noise Removal system by implementing a Wiener filtering inspired process.
+Wiener-DolbyNR tries to obtain an effect similar to the popular Dolby Noise Removal system by implementing a Wiener filtering inspired process.<br/>
 
 ![screenshot of the project](/images/WDNR_screenshot.png)
 
-Buttons explanations.
+Clean demo songs are provided through a drop-down menu, the user has the choice to upload their own audio file as well.<br/>
+Two players are present in order to play the selected song (on the left) and the denoised file (to the right).<br/><br/>
+At the center of the page two buttons are available: one to apply and remove the tape hiss to the uploaded song, the other to perform the processing required to denoise the song.<br/>
+The denoising process is performed on the python backend of the tool, using Flask to allow for the communication between the two sections.<br/><br/>
+At the bottom of the page there's a section dedicated to the artificial noise that is added to the clean track. This is necessary in order to 
+simulate the tape hiss we want to eliminate during the wiener filtering process.
 
 <p>
   <img align="left" src="images/dark-light_mode.png"  width = 300px height = 300px object-fit = cover>
@@ -55,10 +60,6 @@ It can be customized by modifying these paramaters:
     - *Gain*: amplitude of the white noise
   - **High Pass Filter** (*createBiquadFilter(type=highpass)*): better emulates the high frequency nature of tape hiss
     - *Frequency*: cutoff frequency for the HP filter
-    - *Gain*: 
+    - *Gain*: output over input ratio of the filter
 
 This section was implemented through the use of the **WebAudioAPI**.
-
-## Python processing (Denoising)
-
-Explain briefly the steps done in python to denoise.
