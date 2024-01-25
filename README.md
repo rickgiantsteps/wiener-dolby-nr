@@ -1,4 +1,6 @@
-![Wiener Dolby Noise Removal](/images/WienerDNR.png)
+<p align="center">
+  <img src="/images/WienerDNR.png" width = 65% height = 65% object-fit = cover>
+<p/>
 
 # Wiener DOLBY-NR
 
@@ -25,7 +27,9 @@ pip install numpy
 
 Wiener-DolbyNR tries to obtain an effect similar to the popular Dolby Noise Removal system by implementing a Wiener filtering inspired process.<br/>
 
-![screenshot of the project](/images/WDNR_screenshot.png)
+<p align="center">
+  <img src="/images/WDNR_screenshot.png" width = 50% height = 40% object-fit = cover>
+<p/>
 
 Clean demo songs are provided through a drop-down menu, the user has the choice to upload their own audio file as well.<br/>
 Two players are present in order to play the selected song (on the left) and the denoised file (to the right).<br/><br/>
@@ -35,7 +39,7 @@ At the bottom of the page there's a section dedicated to the artificial noise th
 simulate the tape hiss we want to eliminate during the wiener filtering process.
 
 <p>
-  <img align="left" src="images/dark-light_mode.png"  width = 300px height = 300px object-fit = cover>
+  <img align="left" src="images/dark-light_mode.png"  width = 450px height = 300px object-fit = cover>
   <br/>
   <br/>
   <br/>
