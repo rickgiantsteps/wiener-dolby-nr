@@ -267,9 +267,10 @@ export default {
 
   methods: {
 
-    hideTextAfterDelay() {
+    hideTextAfterDelay(newtext) {
       setTimeout(() => {
-        this.message = "";
+        if(newtext===this.message)
+          this.message = "";
       }, 5000); // Adjust the time (in milliseconds) as needed
     },
 
@@ -286,7 +287,7 @@ export default {
           })
           .catch(error => {
             this.message = "Error in retrieving the processed file: " + error
-            this.hideTextAfterDelay()
+            this.hideTextAfterDelay(this.message)
             console.error('Error in retrieving the processed file:', error);
           });
     },
@@ -308,14 +309,14 @@ export default {
           .then(data => {
             this.denoisedName = data.filename
             this.message = data.message+"!"
-            this.hideTextAfterDelay()
+            this.hideTextAfterDelay(this.message)
             console.log('Upload successful', data);
             console.log(data);
             this.getDenoised();
           })
           .catch(error => {
             this.message = error
-            this.hideTextAfterDelay()
+            this.hideTextAfterDelay(this.message)
             console.error('Error:', error);
           });
     },
@@ -334,7 +335,7 @@ export default {
           .then(response => response.json())
           .then(data => {
             this.message = data.message+"!"
-            this.hideTextAfterDelay()
+            this.hideTextAfterDelay(this.message)
             console.log('Upload successful', data);
             if (data.filename) {
               this.uploadedFile = data.filename;
@@ -342,7 +343,7 @@ export default {
           })
           .catch(error => {
             this.message = error
-            this.hideTextAfterDelay()
+            this.hideTextAfterDelay(this.message)
             console.error('Error uploading file', error);
           });
     },
