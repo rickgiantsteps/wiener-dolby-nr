@@ -279,17 +279,27 @@ export default {
       this.sendNoiseData();
     },
 
-    getDenoised() {
-      fetch('/get_denoised')
-          .then(response => response.blob())
-          .then(audioBlob => {
-            this.denoisedFile = URL.createObjectURL(audioBlob);
-          })
-          .catch(error => {
-            this.message = "Error in retrieving the processed file: " + error
-            this.hideTextAfterDelay(this.message)
-            console.error('Error in retrieving the processed file:', error);
-          });
+    async getDenoised() {
+      try {
+        const response = await fetch('http://localhost:5000/api/get_denoised', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          responseType: 'arraybuffer',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch denoised audio');
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const blob = new Blob([arrayBuffer], {type: 'audio/*'});
+        this.denoisedFile = URL.createObjectURL(blob);
+
+      } catch (error) {
+        console.error('Error playing denoised audio', error);
+      }
     },
     
     sendNoiseData() {

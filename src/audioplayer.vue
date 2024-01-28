@@ -14,7 +14,7 @@ export default defineComponent({
     download: false,
     secondplayer: false,
     downUrl: null,
-    denoisedName: null
+    denoisedFile: null
   },
 
   watch: {
@@ -61,6 +61,7 @@ export default defineComponent({
       duration: null,
       currentTime: null,
       isTimerPlaying: false,
+      isTimerPlaying_second: false,
       tracks: [
         {
           name: "Dancing Queen",
@@ -91,57 +92,62 @@ export default defineComponent({
       currentTrack: null,
       currentTrackIndex: 0,
       transitionName: null,
-      denoisedFile: null
+      denoisedAudio: null
     };
   },
 
   methods: {
 
-     async song_onFileChanged() {
-         if (!this.secondplayer) {
-           this.$emit("update", "5");
-           this.uploadedFile = this.$refs.newsong.files[0];
+    async song_onFileChanged() {
+      if (!this.secondplayer) {
+        this.$emit("update", "5");
+        this.uploadedFile = this.$refs.newsong.files[0];
 
-           await mmb.parseBlob(this.uploadedFile).then(metadata => {
-             this.newname = metadata.common.title;
-             this.newartist = metadata.common.artist;
-           });
-           this.tracks.pop();
-           if (this.newname === undefined && this.newartist === undefined) {
-             this.newname = this.uploadedFile.name;
-           }
-           this.tracks.push({
-             name: this.newname,
-             artist: this.newartist,
-             source: URL.createObjectURL(this.uploadedFile)
-           });
-           this.currentTrackIndex = this.tracks.length - 1;
-           this.currentTrack = this.tracks[this.currentTrackIndex];
-           this.generateTime();
-           this.resetPlayer();
-         } else {
-           this.resetPlayer();
-         }
-     },
-
-    async getProcessedSong() {
-      if (this.secondplayer) {
-        this.denoisedFile = await this.createFileObjectFromURL(this.downUrl, this.denoisedName, "audio/*");
+        await mmb.parseBlob(this.uploadedFile).then(metadata => {
+          this.newname = metadata.common.title;
+          this.newartist = metadata.common.artist;
+        });
         this.tracks.pop();
         if (this.newname === undefined && this.newartist === undefined) {
-          this.newname = this.denoisedName;
+          this.newname = this.uploadedFile.name;
         }
         this.tracks.push({
-          name: this.denoisedName,
-          artist: this.denoisedName,
-          source: URL.createObjectURL(this.denoisedFile)
+          name: this.newname,
+          artist: this.newartist,
+          source: URL.createObjectURL(this.uploadedFile)
         });
         this.currentTrackIndex = this.tracks.length - 1;
         this.currentTrack = this.tracks[this.currentTrackIndex];
         this.generateTime();
         this.resetPlayer();
+      } else {
+        this.resetPlayer();
       }
     },
+
+    async getProcessedSong() {
+        if (this.secondplayer) {
+          this.denoisedAudio = new Audio(this.downUrl);
+          console.log(this.downUrl);
+          this.denoisedAudio.play();
+
+        }
+          /*
+            this.tracks.pop();
+            if (this.newname === undefined && this.newartist === undefined) {
+              this.newname = this.denoisedName;
+            }
+            this.tracks.push({
+              name: this.currentTrackIndex,
+              artist: this.currentTrackIndex,
+              source: this.downUrl
+            });
+            this.currentTrackIndex = this.tracks.length - 1;
+            this.currentTrack = this.tracks[this.currentTrackIndex];
+            this.generateTime();
+            this.resetPlayer();
+          }*/
+        },
 
     async songSelect(){
       if (!this.secondplayer) {
@@ -157,7 +163,7 @@ export default defineComponent({
     },
 
     createFileObjectFromURL(url, fileName, mimeType) {
-        return fetch(url)
+      return fetch(url)
           .then(response => response.blob())
           .then(blob => new File([blob], fileName, { type: mimeType }));
     },
@@ -171,6 +177,7 @@ export default defineComponent({
         this.isTimerPlaying = false;
       }
     },
+
 
     generateTime() {
       let width = (100 / this.audio.duration) * this.audio.currentTime;
@@ -239,13 +246,28 @@ export default defineComponent({
     },
 
     downloadFile() {
-      const downloadLink = document.createElement('a');
-      downloadLink.href = this.downUrl;
-      downloadLink.download = this.denoisedName;
+      fetch('http://localhost:5000/api/get_denoised', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        responseType: 'blob',
+      })
+          .then(response => response.blob())
+          .then(blob => {
+            const url = URL.createObjectURL(blob);
 
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'denoised_audio.wav';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          })
+          .catch(error => {
+            console.error('Error downloading denoised audio', error);
+          });
     }
   },
 
