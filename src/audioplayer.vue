@@ -36,7 +36,9 @@ export default defineComponent({
     },
     isTimerPlaying: {
       handler: function (newVal) {
-        this.$emit('timer', newVal);
+        if (!this.secondplayer) {
+          this.$emit('timer', newVal);
+        }
         if (newVal&&!this.secondplayer&&this.$parent.$data.appliedNoise) {
           this.$emit('play');
         } else if (!this.secondplayer && this.$parent.$data.appliedNoise) {
