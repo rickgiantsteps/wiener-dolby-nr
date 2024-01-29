@@ -52,8 +52,8 @@ export default defineComponent({
       newname: "Unknown title",
       newartist: "Unknown artist",
       secondtrack: {
-        artist: "Apply DOLBY NR",
-        name: "No data"
+        artist: "DOLBY NR",
+        name: "Denoised Version"
       },
       uploadedFile : null,
       audio: null,
@@ -137,7 +137,6 @@ export default defineComponent({
 
             this.currentTrackIndex = this.tracks.length - 1;
             this.currentTrack = this.tracks[this.currentTrackIndex];
-            this.generateTime();
             this.resetPlayer();
 
             console.log("Tracks: " + this.tracks);
@@ -185,27 +184,7 @@ export default defineComponent({
       }
     },
 
-    /*
-    play() {
-      if(!this.secondplayer) {
-        if (this.audio.paused) {
-          this.audio.play();
-          this.isTimerPlaying = true;
-        } else {
-          this.audio.pause();
-          this.isTimerPlaying = false;
-        }
-      }else{
-        if (this.denoisedAudio.paused) {
-          this.denoisedAudio.play();
-          this.isTimerPlaying = true;
-        } else {
-          this.denoisedAudio.pause();
-          this.isTimerPlaying = false;
-        }
-      }
-    },
-*/
+    
 
     generateTime() {
       if(!this.secondplayer) {
@@ -252,6 +231,7 @@ export default defineComponent({
         if (cursec < 10) {
           cursec = "0" + cursec;
         }
+        console.log("current time " + this.denoisedAudio.duration.currentTime);
         this.duration = durmin + ":" + dursec;
         this.currentTime = curmin + ":" + cursec;
       }
@@ -333,17 +313,6 @@ export default defineComponent({
       }
     },
 
-/*
-    downloadFile() {
-      const link = document.createElement('a');
-      link.href = this.downUrl;
-      link.download = 'denoised_audio.wav';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  },
-*/
 
     downloadFile() {
       fetch('http://localhost:5000/api/get_denoised', {
