@@ -259,7 +259,8 @@ export default {
       out: [],
       uploadedFile: null,
       denoisedFile: null,
-      denoisedName: null
+      denoisedName: null,
+      prova:null
     }
 
   },
@@ -294,7 +295,7 @@ export default {
         }
 
         const arrayBuffer = await response.arrayBuffer();
-        const blob = new Blob([arrayBuffer], {type: 'audio/*'});
+        const blob = await new Blob([arrayBuffer], {type: 'audio/*'});
         this.denoisedFile = URL.createObjectURL(blob);
 
       } catch (error) {

@@ -13,14 +13,13 @@ export default defineComponent({
     selected: String,
     download: false,
     secondplayer: false,
-    downUrl: null,
-    denoisedFile: null
+    downUrl: String
   },
 
   watch: {
     downUrl: {
       handler: function() {
-        this.getProcessedSong()
+        this.getProcessedSong();
       }
     },
     uploadedFile: {
@@ -122,33 +121,28 @@ export default defineComponent({
         this.currentTrack = this.tracks[this.currentTrackIndex];
         this.generateTime();
         this.resetPlayer();
-      } else {
-        this.resetPlayer();
       }
     },
+
 
     async getProcessedSong() {
         if (this.secondplayer) {
           this.denoisedAudio = new Audio(this.downUrl);
-          console.log(this.downUrl);
-          this.denoisedAudio.play();
-
-        }
-          /*
-            this.tracks.pop();
-            if (this.newname === undefined && this.newartist === undefined) {
-              this.newname = this.denoisedName;
-            }
+          this.tracks.pop();
             this.tracks.push({
-              name: this.currentTrackIndex,
-              artist: this.currentTrackIndex,
+              name: "prova",
+              artist: "prova",
               source: this.downUrl
             });
+
             this.currentTrackIndex = this.tracks.length - 1;
             this.currentTrack = this.tracks[this.currentTrackIndex];
             this.generateTime();
             this.resetPlayer();
-          }*/
+
+            console.log("Tracks: " + this.tracks);
+            console.log("current track source: " + this.tracks[this.currentTrackIndex].source);
+          }
         },
 
     async songSelect(){
@@ -170,56 +164,131 @@ export default defineComponent({
           .then(blob => new File([blob], fileName, { type: mimeType }));
     },
 
-    play() {
-      if (this.audio.paused) {
-        this.audio.play();
-        this.isTimerPlaying = true;
-      } else {
-        this.audio.pause();
-        this.isTimerPlaying = false;
+    async play() {
+      if(!this.secondplayer) {
+        if (this.audio.paused) {
+          this.audio.play();
+          this.isTimerPlaying = true;
+        } else {
+          this.audio.pause();
+          this.isTimerPlaying = false;
+        }
+      }else{
+        if (this.denoisedAudio.paused) {
+          this.denoisedAudio.play();
+          this.isTimerPlaying = true;
+        } else {
+          this.denoisedAudio.pause();
+          this.isTimerPlaying = false;
+        }
+
       }
     },
 
+    /*
+    play() {
+      if(!this.secondplayer) {
+        if (this.audio.paused) {
+          this.audio.play();
+          this.isTimerPlaying = true;
+        } else {
+          this.audio.pause();
+          this.isTimerPlaying = false;
+        }
+      }else{
+        if (this.denoisedAudio.paused) {
+          this.denoisedAudio.play();
+          this.isTimerPlaying = true;
+        } else {
+          this.denoisedAudio.pause();
+          this.isTimerPlaying = false;
+        }
+      }
+    },
+*/
 
     generateTime() {
-      let width = (100 / this.audio.duration) * this.audio.currentTime;
-      this.barWidth = width + "%";
-      this.circleLeft = width + "%";
-      let durmin = Math.floor(this.audio.duration / 60);
-      let dursec = Math.floor(this.audio.duration - durmin * 60);
-      let curmin = Math.floor(this.audio.currentTime / 60);
-      let cursec = Math.floor(this.audio.currentTime - curmin * 60);
-      if (durmin < 10) {
-        durmin = "0" + durmin;
+      if(!this.secondplayer) {
+        let width = (100 / this.audio.duration) * this.audio.currentTime;
+        this.barWidth = width + "%";
+        this.circleLeft = width + "%";
+        let durmin = Math.floor(this.audio.duration / 60);
+        let dursec = Math.floor(this.audio.duration - durmin * 60);
+        let curmin = Math.floor(this.audio.currentTime / 60);
+        let cursec = Math.floor(this.audio.currentTime - curmin * 60);
+
+        if (durmin < 10) {
+          durmin = "0" + durmin;
+        }
+        if (dursec < 10) {
+          dursec = "0" + dursec;
+        }
+        if (curmin < 10) {
+          curmin = "0" + curmin;
+        }
+        if (cursec < 10) {
+          cursec = "0" + cursec;
+        }
+        this.duration = durmin + ":" + dursec;
+        this.currentTime = curmin + ":" + cursec;
+      }else{
+        let width = (100 / this.denoisedAudio.duration) * this.denoisedAudio.currentTime;
+        this.barWidth = width + "%";
+        this.circleLeft = width + "%";
+        let durmin = Math.floor(this.denoisedAudio.duration / 60);
+        let dursec = Math.floor(this.denoisedAudio.duration - durmin * 60);
+        let curmin = Math.floor(this.denoisedAudio.currentTime / 60);
+        let cursec = Math.floor(this.denoisedAudio.currentTime - curmin * 60);
+
+        if (durmin < 10) {
+          durmin = "0" + durmin;
+        }
+        if (dursec < 10) {
+          dursec = "0" + dursec;
+        }
+        if (curmin < 10) {
+          curmin = "0" + curmin;
+        }
+        if (cursec < 10) {
+          cursec = "0" + cursec;
+        }
+        this.duration = durmin + ":" + dursec;
+        this.currentTime = curmin + ":" + cursec;
       }
-      if (dursec < 10) {
-        dursec = "0" + dursec;
-      }
-      if (curmin < 10) {
-        curmin = "0" + curmin;
-      }
-      if (cursec < 10) {
-        cursec = "0" + cursec;
-      }
-      this.duration = durmin + ":" + dursec;
-      this.currentTime = curmin + ":" + cursec;
     },
 
     updateBar(x) {
-      let progress = this.$refs.progress;
-      let maxduration = this.audio.duration;
-      let position = x - progress.offsetLeft;
-      let percentage = (100 * position) / progress.offsetWidth;
-      if (percentage > 100) {
-        percentage = 100;
+      if(!this.secondplayer) {
+        let progress = this.$refs.progress;
+        let maxduration = this.audio.duration;
+        let position = x - progress.offsetLeft;
+        let percentage = (100 * position) / progress.offsetWidth;
+        if (percentage > 100) {
+          percentage = 100;
+        }
+        if (percentage < 0) {
+          percentage = 0;
+        }
+        this.barWidth = percentage + "%";
+        this.circleLeft = percentage + "%";
+        this.audio.currentTime = (maxduration * percentage) / 100;
+        this.audio.play();
+      }else{
+        let progress = this.$refs.progress;
+        let maxduration = this.denoisedAudio.duration;
+        let position = x - progress.offsetLeft;
+        let percentage = (100 * position) / progress.offsetWidth;
+        if (percentage > 100) {
+          percentage = 100;
+        }
+        if (percentage < 0) {
+          percentage = 0;
+        }
+        this.barWidth = percentage + "%";
+        this.circleLeft = percentage + "%";
+        this.denoisedAudio.currentTime = (maxduration * percentage) / 100;
+        this.denoisedAudio.play();
       }
-      if (percentage < 0) {
-        percentage = 0;
-      }
-      this.barWidth = percentage + "%";
-      this.circleLeft = percentage + "%";
-      this.audio.currentTime = (maxduration * percentage) / 100;
-      this.audio.play();
     },
     clickProgress(e) {
       this.isTimerPlaying = true;
@@ -231,21 +300,50 @@ export default defineComponent({
       this.resetPlayer();
     },
     resetPlayer() {
-      if (this.isTimerPlaying){
-        this.play()
-      }
-      this.barWidth = 0;
-      this.circleLeft = 0;
-      this.audio.currentTime = 0;
-      this.audio.src = this.currentTrack.source;
-      setTimeout(() => {
-        if(this.isTimerPlaying) {
-          this.audio.play();
-        } else {
-          this.audio.pause();
+      if(!this.secondplayer) {
+        if (this.isTimerPlaying) {
+          this.play()
         }
-      }, 300);
+        this.barWidth = 0;
+        this.circleLeft = 0;
+        this.audio.currentTime = 0;
+        this.audio.src = this.currentTrack.source;
+        setTimeout(() => {
+          if (this.isTimerPlaying) {
+            this.audio.play();
+          } else {
+            this.audio.pause();
+          }
+        }, 300);
+      }else{
+        if (this.isTimerPlaying) {
+          this.play()
+        }
+        this.barWidth = 0;
+        this.circleLeft = 0;
+        this.denoisedAudio.currentTime = 0;
+        this.denoisedAudio.src = this.currentTrack.source;
+        setTimeout(() => {
+          if (this.isTimerPlaying) {
+            this.denoisedAudio.play();
+          } else {
+            this.denoisedAudio.pause();
+          }
+        }, 300);
+      }
     },
+
+/*
+    downloadFile() {
+      const link = document.createElement('a');
+      link.href = this.downUrl;
+      link.download = 'denoised_audio.wav';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  },
+*/
 
     downloadFile() {
       fetch('http://localhost:5000/api/get_denoised', {
